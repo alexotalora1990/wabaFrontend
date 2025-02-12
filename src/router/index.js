@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/login.js';  // Pinia store para manejar e
 const routes = [
   { path: '/', component: () => import('../pages/Home.vue') },
   { path: '/login', component: () => import('../pages/Login.vue') },  // Ruta de login
+  {path:'/usuarios', component:()=> import('../pages/Usuario.vue'), meta:{requiresAuth:true}},
   { path: '/clientes', component: () => import('../pages/Clientes.vue'), meta: { requiresAuth: true } },
   { path: '/configuracion', component: () => import('../pages/Configuracion.vue'), meta: { requiresAuth: true } },
   { path: '/etiquetaSistema', component: () => import('../pages/EtiquetaSistema.vue'), meta: { requiresAuth: true } },

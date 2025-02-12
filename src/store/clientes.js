@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useAuthStore } from '../store/login.js';
 
 export const useClientesStore = defineStore('clientes', () => {
@@ -8,36 +8,42 @@ export const useClientesStore = defineStore('clientes', () => {
   const clientes = ref([]);
   const loading = ref(false);
   const error = ref(null);
+  const token = computed(()=>useLogin.token);
 
   // Listar todos los clientes
+
+
+
+  
   const ListarTodos = async () => {
     try {
       loading.value = true;
       error.value = null;
-
-      if (!useLogin.token) {
-        console.error("Token no disponible en el store.");
-        throw new Error('El token de autenticación no está disponible.');
+  
+      if (!token.value) {
+        console.error("❌ Token no disponible en el store.");
+        throw new Error("El token de autenticación no está disponible.");
       }
-
-      console.log('Token utilizado para la solicitud:', useLogin.token);
-
-      const response = await axios.get('clientes', {
+  
+      console.log("🔍 Token utilizado para la solicitud:", token.value);
+  
+      const response = await axios.get("clientes", {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
-        },
+          Authorization: `Bearer ${token.value}` // ✅ Asegurar que se envía correctamente
+        }
       });
-
+  
       clientes.value = response.data;
-      console.log('Clientes obtenidos en el store:', response.data);
+      console.log("✅ Clientes obtenidos en el store:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error en ListarTodos:", error.message || error);
+      console.error("❌ Error en ListarTodos:", error.message || error);
       throw error;
     } finally {
       loading.value = false;
     }
   };
+  
 
   // Listar clientes activos
   const ListarActivos = async () => {
@@ -54,7 +60,7 @@ export const useClientesStore = defineStore('clientes', () => {
 
       const response = await axios.get('clientes/listar/activos', {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`,
         },
       });
 
@@ -84,7 +90,7 @@ export const useClientesStore = defineStore('clientes', () => {
 
       const response = await axios.get('clientes/listar/inactivos', {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`  ,
         },
       });
 
@@ -105,7 +111,7 @@ export const useClientesStore = defineStore('clientes', () => {
   
       const response = await axios.post('clientes/agregar', cliente, {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`,
         },
       });
   
@@ -126,7 +132,7 @@ export const useClientesStore = defineStore('clientes', () => {
   
       const response = await axios.put(`clientes/actualizar/${id}`, cliente, {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`,
         },
       });
   
@@ -154,7 +160,7 @@ export const useClientesStore = defineStore('clientes', () => {
 
       const response = await axios.put(`clientes/activar/${id}`, {}, {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`,
         },
       });
 
@@ -182,7 +188,7 @@ export const useClientesStore = defineStore('clientes', () => {
 
       const response = await axios.put(`clientes/desactivar/${id}`, {}, {
         headers: {
-          Authorization: `Bearer ${useLogin.token}`,
+          Authorization: `Bearer ${token.value}`,
         },
       });
 
@@ -208,3 +214,49 @@ export const useClientesStore = defineStore('clientes', () => {
     crearCliente,
   };
 });
+// import { defineStore } from 'pinia';
+// import axios from 'axios';
+// import { ref, computed } from 'vue';
+// import { useAuthStore } from './login.js';
+
+// export const useClientesStore = defineStore('clientes', () => {
+//   const authStore = useAuthStore();
+//   const clientes = ref([]);
+//   const loading = ref(false);
+//   const error = ref(null);
+
+//   // Obtiene el token del store de autenticación
+//   const token = computed(() => authStore.token);
+
+//   // Listar todos los clientes
+//   const ListarTodos = async () => {
+//     try {
+//       loading.value = true;
+//       error.value = null;
+
+//       if (!token.value) {
+//         console.error("Token no disponible en el store.");
+//         throw new Error('El token de autenticación no está disponible.');
+//       }
+
+//       console.log('Token utilizado para la solicitud:', token.value);
+
+//       const response = await axios.get('/clientes', {
+//         headers: {
+//           Authorization: `Bearer ${token.value}`
+//         }
+//       });
+
+//       clientes.value = response.data;
+//       console.log('Clientes obtenidos en el store:', response.data);
+//       return response.data;
+//     } catch (error) {
+//       console.error("Error en ListarTodos:", error.message || error);
+//       throw error;
+//     } finally {
+//       loading.value = false;
+//     }
+//   };
+
+//   return { clientes, loading, error, ListarTodos };
+// });

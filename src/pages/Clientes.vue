@@ -75,6 +75,10 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
+            <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
+              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
+              hide-bottom-space />
+
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
             <q-input outlined v-model="formulario.documento" label="Documento" class="q-my-md q-mx-md"
@@ -165,11 +169,19 @@
 import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useClientesStore } from '../store/clientes.js';
+import { useUsuariosStore } from '../store/usuarios.js';
+
 
 const $q = useQuasar();
 const storeClientes = useClientesStore();
+const storeUsuarios=useUsuariosStore();
 
 // Estados
+
+const usuarios=[];
+const idUsuario=ref('')
+let datos={}
+let options=ref(usuarios)
 const clientes = ref([]);
 const busqueda = ref('');
 const loading = ref(false);
@@ -200,19 +212,20 @@ const formulario = ref({
   direccion: '',
   ciudad: '',
   pais: '',
+  idUsuario:''
 });
 
-const modoEdicionPaso = ref(false);
-const formularioPaso = ref({
-  _id: null,
-  numero: '',
-  link: '',
-  descripcion: ''
-});
+// const modoEdicionPaso = ref(false);
+// const formularioPaso = ref({
+//   _id: null,
+//   numero: '',
+//   link: '',
+//   descripcion: ''
+// });
 
-// Datos temporales
-const clienteSeleccionado = ref(null);
-const pasos = ref([]);
+// // Datos temporales
+// const clienteSeleccionado = ref(null);
+// const pasos = ref([]);
 
 
 const rules = {
@@ -275,6 +288,26 @@ const columnas = [
 
 // Método para cargar campañas según el filtro
 
+async function listarUsuarios() {
+  const response= await storeUsuarios.ListarActivos()
+
+  response.forEach(item =>{
+    datos={
+      label:item.nombre,
+      value:item._id
+    }
+    usuarios.push(datos)
+  })
+  console.log(usuarios);
+ 
+} 
+function filterFn(val, update, abort) {
+    update(() => {
+        const needle = val.toLowerCase();
+        options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
+    })
+}
+
 const cargarDatos = async () => {
   try {
     loading.value = true;
@@ -323,6 +356,7 @@ watch(filtroSeleccionado, () => {
 // Cargar campañas al montar el componente
 onMounted(() => {
   cargarDatos();
+  listarUsuarios()
 });
 
 // Cambiar estado de la campaña
@@ -358,7 +392,8 @@ const abrirFormulario = () => {
     wp: '',
     direccion: '',
     ciudad: '',
-    pais: ''
+    pais: '',
+    idUsuario:''
   };
   mostrarFormulario.value = true;
 };
@@ -368,6 +403,7 @@ const editarDatos = (cliente) => {
   modoEdicion.value = true;
   formulario.value = {
     _id: cliente._id,
+    idUsuario:idUsuario.value.value,
     nombre: cliente.nombre,
     documento: cliente.documento,
     correo: cliente.correo,

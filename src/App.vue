@@ -24,6 +24,12 @@
           </q-item-section>
           <q-item-section>Inicio</q-item-section>
         </q-item>
+        <q-item clickable v-ripple to="/usuarios">
+          <q-item-section avatar>
+            <q-icon name="people" />
+          </q-item-section>
+          <q-item-section>Usuarios</q-item-section>
+        </q-item>
         <q-item clickable v-ripple to="/clientes">
           <q-item-section avatar>
             <q-icon name="people" />
@@ -74,8 +80,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from './store/login.js'; // Importa el store
 
 export default {
@@ -87,15 +92,14 @@ export default {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     };
 
-    
     // Cargar el estado de autenticación al iniciar la aplicación
     onMounted(() => {
       authStore.loadAuthState();
     });
 
     const handleLogout = () => {
-      authStore.logout(); // Llama la acción de logout
-      window.location.reload(); // Opcional: recarga la página para limpiar el estado
+      authStore.logout();
+      window.location.href = "/login"; // Mejor redirigir en lugar de recargar
     };
 
     return {
@@ -106,6 +110,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 /* Agrega estilos personalizados si es necesario */
