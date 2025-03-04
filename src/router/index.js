@@ -9,8 +9,13 @@ const routes = [
   {path:'/usuarios', component:()=> import('../pages/Usuario.vue'), meta:{requiresAuth:true}},
   { path: '/clientes', component: () => import('../pages/Clientes.vue'), meta: { requiresAuth: true } },
   { path: '/configuracion', component: () => import('../pages/Configuracion.vue'), meta: { requiresAuth: true } },
-  { path: '/etiquetaSistema', component: () => import('../pages/EtiquetaSistema.vue'), meta: { requiresAuth: true } },
-  { path: '/campaniasSistema', component: () => import('../pages/CampaniaSistema.vue'), meta: { requiresAuth: true } },
+  // { path: '/etiquetaSistema', component: () => import('../pages/EtiquetaSistema.vue'), meta: { requiresAuth: true } },
+  // { path: '/etiquetaCliente', component: () => import('../pages/EtiquetaCliente.vue'), meta: { requiresAuth: true } },
+  // { path: '/campaniasSistema', component: () => import('../pages/CampaniaSistema.vue'), meta: { requiresAuth: true } },
+  // {path:'/campaniasCliente',component:()=> import('../pages/CampaniaCliente.vue'),meta:{requiresAuth:true},},
+  {path:'/campanias',component:()=> import('../pages/Campanias.vue'),meta:{requiresAuth:true},},
+  {path:'/etiqueta',component:()=> import('../pages/Etiquetas.vue'),meta:{requiresAuth:true},},
+
 ];
  
 // Creación del router con protección de rutas
