@@ -19,7 +19,7 @@
     </div>
 
     <!-- Tabla de Campañas -->
-    <q-table title="Campañas Sistema" title-class="text-primary text-weight-bolder text-h5" :rows="campanias"
+    <q-table title="Campañas Usuario" title-class="text-primary text-weight-bolder text-h5" :rows="campanias"
       :columns="columnas" row-key="_id" :loading="loading" :filter="busqueda" class="shadow-1">
       <template v-slot:top-right>
         <q-input v-model="busqueda" outlined dense placeholder="Buscar..." class="q-ml-md">
@@ -81,6 +81,10 @@
 
         <q-form @submit.prevent="guardarCampania">
           <q-card-section class="q-pt-md">
+            <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
+              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
+              hide-bottom-space />
+
             <q-input v-model="formulario.nombre" label="Nombre de la campaña" outlined
               :rules="[val => !!val || 'Campo obligatorio']" class="q-mb-md" />
 
@@ -178,14 +182,20 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
-import { useCampaniaSistemaStore } from '../store/campaniaSistema.js';
+import { useCampaniaClienteStore } from '../store/campaniaCliente.js';
+import { useUsuariosStore } from '../store/usuarios.js';
 
 
 const $q = useQuasar();
-const storeCampanias = useCampaniaSistemaStore();
+const storeCampanias = useCampaniaClienteStore();
+const storeUsuarios=useUsuariosStore();
 
 
 // Estados
+const usuarios=[];
+const idUsuario=ref('')
+let datos={}
+let options=ref(usuarios)
 const campanias = ref([]);
 const busqueda = ref('');
 const loading = ref(false);
@@ -200,6 +210,27 @@ const opcionesFiltro = [
   { label: 'Inactivos', value: 'Inactivos' }
 ];
 
+//traer usuarios
+async function listarUsuarios() {
+  const response= await storeUsuarios.ListarActivos()
+
+  response.forEach(item =>{
+    datos={
+      label:item.nombre,
+      value:item._id
+    }
+    usuarios.push(datos)
+  })
+  console.log(usuarios);
+ 
+} 
+function filterFn(val, update, abort) {
+    update(() => {
+        const needle = val.toLowerCase();
+        options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
+    })
+}
+
 // Diálogos
 const mostrarDialogoCampaña = ref(false);
 const mostrarDialogoPasos = ref(false);
@@ -210,7 +241,8 @@ const modoEdicion = ref(false);
 const formulario = ref({
   _id: null,
   nombre: '',
-  pasos: []
+  pasos: [],
+  idUsuario:''
 });
 
 const modoEdicionPaso = ref(false);
@@ -220,6 +252,8 @@ const formularioPaso = ref({
   link: '',
   descripcion: ''
 });
+    
+
 
 // Datos temporales
 const campaniaSeleccionada = ref(null);
@@ -291,6 +325,7 @@ watch(filtroSeleccionado, () => {
 // Cargar campañas al montar el componente
 onMounted(() => {
   cargarCampanias();
+  listarUsuarios()
 });
 
 // Cambiar estado de la campaña
