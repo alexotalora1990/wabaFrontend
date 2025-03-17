@@ -75,8 +75,13 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
-            <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
-              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
+            <q-select v-if="!modoEdicion" 
+            outlined
+             v-model="formulario.idUsuario"
+              label="Usuario" 
+              :options="options"
+              option-value="value"
+               @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
               hide-bottom-space />
 
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"

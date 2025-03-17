@@ -24,12 +24,19 @@
           </q-item-section>
           <q-item-section>Inicio</q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/usuarios">
+
+        <q-item
+          v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+          clickable
+          v-ripple
+          to="/usuarios"
+        >
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
           <q-item-section>Usuarios</q-item-section>
         </q-item>
+
         <q-item clickable v-ripple to="/clientes">
           <q-item-section avatar>
             <q-icon name="people" />
@@ -42,7 +49,7 @@
           </q-item-section>
           <q-item-section>Configuración</q-item-section>
         </q-item>
-                <q-item clickable v-ripple to="/etiqueta">
+        <q-item clickable v-ripple to="/etiqueta">
           <q-item-section avatar>
             <q-icon name="tag" />
           </q-item-section>
@@ -53,6 +60,12 @@
             <q-icon name="campaign" />
           </q-item-section>
           <q-item-section>Campañas </q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/pago">
+          <q-item-section avatar>
+            <q-icon name="tag" />
+          </q-item-section>
+          <q-item-section>Pago </q-item-section>
         </q-item>
         <q-item clickable v-ripple to="/configuracion">
           <q-item-section avatar>

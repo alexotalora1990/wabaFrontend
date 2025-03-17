@@ -11,7 +11,13 @@
 
     <!-- Filtros y Botón Crear -->
     <div class="row q-mb-md items-center">
-      <q-btn color="primary" icon="add" label="Nueva Campaña" class="q-mr-md" @click="abrirCreacion" />
+      <q-btn 
+      v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+      color="primary" 
+      icon="add" 
+      label="Nueva Campaña" 
+      class="q-mr-md"
+       @click="abrirCreacion" />
 
 
       <q-select v-model="filtroSeleccionado" :options="opcionesFiltro" label="Filtrar por" outlined dense
@@ -40,10 +46,14 @@
       <!-- Columna Acciones -->
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="q-gutter-x-sm">
-          <q-btn flat color="blue" icon="edit" @click="editarCampania(props.row)">
+          <q-btn 
+           v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+          flat color="blue" icon="edit" @click="editarCampania(props.row)">
             <q-tooltip>Editar</q-tooltip>
           </q-btn>
-          <q-btn flat :color="props.row.estado ? 'red' : 'green'" :icon="props.row.estado ? 'toggle_off' : 'toggle_on'"
+          <q-btn 
+           v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+          flat :color="props.row.estado ? 'red' : 'green'" :icon="props.row.estado ? 'toggle_off' : 'toggle_on'"
             @click="toggleEstado(props.row)">
 
             <q-tooltip>
@@ -53,7 +63,9 @@
           <q-btn flat color="teal" icon="list" @click="abrirPasos(props.row)">
             <q-tooltip>Ver Pasos</q-tooltip>
           </q-btn>
-          <q-btn flat color="red" icon="delete" @click="eliminarCampania(props.row)">
+          <q-btn 
+          v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+          flat color="red" icon="delete" @click="eliminarCampania(props.row)">
             <q-tooltip>Eliminar Campaña</q-tooltip>
           </q-btn>
 
@@ -102,7 +114,9 @@
               </q-btn>
             </div>
 
-            <q-btn color="primary" icon="add" label="Agregar paso" class="q-mt-md" @click="agregarPasoFormulario" />
+            <q-btn 
+             v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+            color="primary" icon="add" label="Agregar paso" class="q-mt-md" @click="agregarPasoFormulario" />
           </q-card-section>
 
           <q-card-actions align="right">
@@ -127,25 +141,32 @@
             <template v-slot:body-cell-acciones="props">
               <q-td :props="props" class="q-gutter-x-sm">
                 <!-- Botón de editar con tooltip -->
-                <q-btn flat color="blue" icon="edit" @click="editarPaso(props.row)">
+                <q-btn 
+                v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+                flat color="blue" icon="edit" @click="editarPaso(props.row)">
                   <q-tooltip>Editar paso</q-tooltip>
                 </q-btn>
 
                 <!-- Botón de eliminar con tooltip -->
-                <q-btn flat color="red" icon="delete" @click="confirmarEliminarPaso(props.row)">
+                <q-btn 
+                v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+                flat color="red" icon="delete" @click="confirmarEliminarPaso(props.row)">
                   <q-tooltip>Eliminar paso</q-tooltip>
                 </q-btn>
               </q-td>
             </template>
           </q-table>
 
-          <q-btn color="primary" icon="add" label="Nuevo Paso" class="q-mt-md" @click="abrirCreacionPaso" />
+          <q-btn 
+           v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+          color="primary" icon="add" label="Nuevo Paso" class="q-mt-md" @click="abrirCreacionPaso" />
         </q-card-section>
       </q-card>
     </q-dialog>
 
     <!-- Diálogo para Crear/Editar Paso -->
     <q-dialog v-model="mostrarDialogoPaso">
+     
       <q-card style="min-width: 500px">
         <q-card-section class="bg-primary text-white">
           <div class="text-h6">
@@ -153,7 +174,9 @@
           </div>
         </q-card-section>
 
-        <q-form @submit.prevent="guardarPaso">
+        <q-form
+        
+         @submit.prevent="guardarPaso">
           <q-card-section class="q-pt-md">
             <q-input v-model.number="formularioPaso.numero" label="Número de paso" type="number" outlined
               :rules="[val => val > 0 || 'Número inválido']" class="q-mb-md" />
@@ -179,10 +202,11 @@
 import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useCampaniaSistemaStore } from '../store/campaniaSistema.js';
-
+import { useAuthStore } from '../store/login.js';
 
 const $q = useQuasar();
 const storeCampanias = useCampaniaSistemaStore();
+const authStore = useAuthStore();
 
 
 // Estados
@@ -225,6 +249,7 @@ const formularioPaso = ref({
 const campaniaSeleccionada = ref(null);
 const pasos = ref([]);
 
+
 // Columnas de la tabla
 const columnas = [
   { name: 'nombre', label: 'Nombre', field: 'nombre', align: 'left', sortable: true },
@@ -238,6 +263,7 @@ const columnasPasos = [
   { name: 'link', label: 'URL', field: 'link' },
   { name: 'acciones', label: 'Acciones', align: 'center' }
 ];
+
 
 
 
