@@ -10,13 +10,14 @@ const routes = [
   {path:'/usuarios', component:()=> import('../pages/Usuario.vue'), meta:{requiresAuth:true, allwedRoles:['admin']}},
   { path: '/clientes', component: () => import('../pages/Clientes.vue'), meta: { requiresAuth: true, allwedRoles:['admin','ayudante','usuario'] } },
   { path: '/configuracion', component: () => import('../pages/Configuracion.vue'), meta: { requiresAuth: true },allwedRoles:['admin','ayudante','usuario'] },
+  {path:'/campanias',component:()=> import('../pages/Campanias.vue'),meta:{requiresAuth:true,allwedRoles:['admin','ayudante','usuario']},},
+  {path:'/etiqueta',component:()=> import('../pages/Etiquetas.vue'),meta:{requiresAuth:true,allwedRoles:['admin','ayudante','usuario']},},
+  {path: '/pago', component: () => import('../pages/Pago.vue'), meta: { requiresAuth: true },allwedRoles:['admin','ayudante'] },
   // { path: '/etiquetaSistema', component: () => import('../pages/EtiquetaSistema.vue'), meta: { requiresAuth: true } },
   // { path: '/etiquetaCliente', component: () => import('../pages/EtiquetaCliente.vue'), meta: { requiresAuth: true } },
   // { path: '/campaniasSistema', component: () => import('../pages/CampaniaSistema.vue'), meta: { requiresAuth: true } },
   // {path:'/campaniasCliente',component:()=> import('../pages/CampaniaCliente.vue'),meta:{requiresAuth:true},},
-  {path:'/campanias',component:()=> import('../pages/Campanias.vue'),meta:{requiresAuth:true,allwedRoles:['admin','ayudante','usuario']},},
-  {path:'/etiqueta',component:()=> import('../pages/Etiquetas.vue'),meta:{requiresAuth:true,allwedRoles:['admin','ayudante','usuario']},},
-  {path: '/pago', component: () => import('../pages/Pago.vue'), meta: { requiresAuth: true },allwedRoles:['admin','ayudante'] },
+  
 ];
  
 // Creación del router con protección de rutas

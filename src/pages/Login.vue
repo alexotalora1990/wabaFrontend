@@ -73,7 +73,7 @@ import { useAuthStore } from '../store/login.js';
 export default {
   setup() {
     const correo = ref('alexotalora2022@gmail.com');
-    const contrasena = ref('12345');
+    const contrasena = ref('123456');
     const errorMessage = ref('');
     const loading = ref(false);
     const authStore = useAuthStore();
