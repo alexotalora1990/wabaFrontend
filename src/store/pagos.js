@@ -30,7 +30,7 @@ export const usePagoStore = defineStore('pago', () => {
       });
 
       pago.value = response.data;
-      console.log('Etiquetas el Sistema obtenidos en el store:', response.data);
+      console.log('Pagos obtenidos en el store:', response.data);
       return response.data;
     } catch (error) {
       console.error("Error en ListarTodos:", error.message || error);

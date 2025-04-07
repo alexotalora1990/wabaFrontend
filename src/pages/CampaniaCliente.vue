@@ -412,9 +412,6 @@ const abrirCreacionPaso = () => {
   mostrarDialogoPaso.value = true;
 };
 
-
-
-
 const editarPaso = (paso) => {
   modoEdicionPaso.value = true;
   formularioPaso.value = { ...paso };
