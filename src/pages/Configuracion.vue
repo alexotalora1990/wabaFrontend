@@ -15,11 +15,13 @@ const nuevaContrasena = ref("");
 const confirmacionContrasena = ref("");
 const nuevoPlanId = ref("");
 
+const modalContrasena = ref(false);
+const modalPlan = ref(false);
+
 onMounted(async () => {
-  await usuariosStore.ListarTodos(); // Cargar usuarios (esto debería traer el usuario autenticado también o debes usar otra función como fetchUsuarioActual)
+  await usuariosStore.ListarTodos();
   await pagoStore.ListarTodos();
 });
-
 
 const planes = computed(() => pagoStore.pago);
 
@@ -43,111 +45,117 @@ const cambiarContrasena = async () => {
 
   try {
     await usuariosStore.cambiarContrasena(contrasenaActual.value, nuevaContrasena.value);
-    Notify.create({
-      type: 'positive',
-      message: 'Contraseña actualizada correctamente.',
-    });
-
-    // Limpiar campos
+    Notify.create({ type: 'positive', message: 'Contraseña actualizada correctamente.' });
+    modalContrasena.value = false;
     contrasenaActual.value = '';
     nuevaContrasena.value = '';
     confirmacionContrasena.value = '';
   } catch (error) {
-    Notify.create({
-      type: 'negative',
-      message: error.response?.data?.message || 'Error al cambiar la contraseña.',
-    });
+    Notify.create({ type: 'negative', message: error.response?.data?.message || 'Error al cambiar la contraseña.' });
   }
 };
-
 
 // Cambiar plan
 const cambiarPlan = async () => {
   if (!nuevoPlanId.value) {
-    Notify.create({
-      type: 'negative',
-      message: 'Selecciona un plan.',
-    });
+    Notify.create({ type: 'negative', message: 'Selecciona un plan.' });
     return;
   }
-  console.log('Usuario actual:', usuario.value);
-  const idUsuario = usuario.value._id || usuario.value.id;
 
-  if (!usuario.value || !idUsuario) {
-    Notify.create({
-      type: 'negative',
-      message: 'No se encontró el ID del usuario.',
-    });
-    return;
-  }
+  const idUsuario = usuario.value._id || usuario.value.id;
 
   try {
     await usuariosStore.cambiarPlanMembresia(idUsuario, nuevoPlanId.value);
-
-    Notify.create({
-      type: 'positive',
-      message: 'Plan cambiado exitosamente.',
-    });
+    Notify.create({ type: 'positive', message: 'Plan cambiado exitosamente.' });
+    modalPlan.value = false;
   } catch (error) {
-    Notify.create({
-      type: 'negative',
-      message: 'Error al cambiar el plan.',
-    });
+    Notify.create({ type: 'negative', message: 'Error al cambiar el plan.' });
   }
 };
-
 </script>
+
 <template>
-  <div class="container mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4">Configuración de Usuario</h2>
+  <div class="q-pa-md">
+    <div class="q-gutter-md q-mx-auto config-card">
 
-    <div v-if="usuario">
-      <div class="bg-white shadow-md rounded-lg p-4">
-        <h3 class="text-xl font-semibold mb-2">Información Personal</h3>
-        <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
-        <p><strong>Correo:</strong> {{ usuario.correo }}</p>
-        <p><strong>Plan Actual:</strong> {{ usuario.planActual || "Sin plan" }}</p>
-        <p><strong>Días Restantes:</strong> {{ usuario.diasRestantes || 0 }}</p>
+      <div class="q-card q-pa-md shadow-2 relative-position">
+        <div class="q-mb-md">
+          <div class="text-h6">Información Personal</div>
+          <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+          <p><strong>Correo:</strong> {{ usuario.correo }}</p>
 
-      </div>
+          <q-btn 
+            color="primary" 
+            label="Cambiar Contraseña" 
+            class="q-mt-sm"
+            @click="modalContrasena = true"
+          />
+        </div>
 
-      <!-- Cambiar Contraseña -->
-      <div class="bg-white shadow-md rounded-lg p-4 mt-4">
-        <h3 class="text-xl font-semibold mb-2">Cambiar Contraseña</h3>
-        <q-input v-model="contrasenaActual" label="Contraseña actual" type="password" outlined
-          class="w-full p-2 border rounded mb-2" />
-        <input type="password" v-model="nuevaContrasena" placeholder="Nueva contraseña"
-          class="w-full p-2 border rounded mb-2" />
-        <input type="password" v-model="confirmacionContrasena" placeholder="Confirmar contraseña"
-          class="w-full p-2 border rounded mb-2" />
-        <button @click="cambiarContrasena" class="bg-blue-500 text-white p-2 rounded">
-          Cambiar Contraseña
-        </button>
-      </div>
-
-      <!-- Cambiar Plan -->
-      <div class="bg-white shadow-md rounded-lg p-4 mt-4">
-        <h3 class="text-xl font-semibold mb-2">Cambiar Plan de Membresía</h3>
-        <select v-model="nuevoPlanId" class="w-full p-2 border rounded mb-2">
-          <option value="" disabled>Selecciona un plan</option>
-          <option v-for="plan in planes" :key="plan._id" :value="plan._id">
-            {{ plan.nombre }} - {{ plan.periodo }}
-          </option>
-        </select>
-        <button @click="cambiarPlan" class="bg-green-500 text-white p-2 rounded">
-          Cambiar Plan
-        </button>
+        <div class="plan-box">
+          <div class="text-subtitle1">Plan Actual: <strong>{{ usuario.planActual || 'Sin plan' }}</strong></div>
+          <div>Días restantes: {{ usuario.diasRestantes || 0 }}</div>
+          <q-btn 
+            color="green" 
+            label="Cambiar Plan" 
+            class="q-mt-sm" 
+            @click="modalPlan = true"
+          />
+        </div>
       </div>
     </div>
 
-    <div v-else>
-      <p>Cargando información...</p>
-    </div>
+    <!-- Modal Cambiar Contraseña -->
+    <q-dialog v-model="modalContrasena">
+      <q-card class="q-pa-md" style="min-width: 300px">
+        <q-card-section>
+          <div class="text-h6">Cambiar Contraseña</div>
+        </q-card-section>
+        <q-card-section class="q-gutter-md">
+          <q-input v-model="contrasenaActual" label="Contraseña actual" type="password" outlined />
+          <q-input v-model="nuevaContrasena" label="Nueva contraseña" type="password" outlined />
+          <q-input v-model="confirmacionContrasena" label="Confirmar contraseña" type="password" outlined />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn label="Guardar" color="primary" @click="cambiarContrasena" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- Modal Cambiar Plan -->
+    <q-dialog v-model="modalPlan">
+      <q-card class="q-pa-md" style="min-width: 300px">
+        <q-card-section>
+          <div class="text-h6">Cambiar Plan</div>
+        </q-card-section>
+        <q-card-section class="q-gutter-md">
+          <q-select 
+            v-model="nuevoPlanId" 
+            :options="planes.map(p => ({ label: `${p.nombre} - ${p.periodo}`, value: p._id }))" 
+            label="Selecciona un nuevo plan" 
+            outlined
+            emit-value 
+            map-options
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn label="Guardar" color="green" @click="cambiarPlan" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <style scoped>
-.container {
-  max-width: 600px;
+.config-card {
+  max-width: 700px;
+}
+.plan-box {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  text-align: right;
 }
 </style>
