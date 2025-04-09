@@ -23,7 +23,9 @@ onMounted(async () => {
   await pagoStore.ListarTodos();
 });
 
-const planes = computed(() => pagoStore.pago);
+const planes = computed(() =>
+  pagoStore.pago.filter(p => p.nombre.toLowerCase() !== "gratis")
+);
 
 // Cambiar contraseña
 const cambiarContrasena = async () => {
