@@ -34,7 +34,7 @@
           <q-input
             v-model="contrasena"
             label="Contraseña"
-            type="password"
+           :type="mostrar ? 'text' : 'password'"
             outlined
             dense
             :rules="[val => !!val || 'La contraseña es obligatoria']"
@@ -42,7 +42,15 @@
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
+            <template #append>
+      <q-icon
+        :name="mostrar ? 'visibility_off' : 'visibility'"
+        @click="mostrar = !mostrar"
+        class="cursor-pointer"
+      />
+    </template>
           </q-input>
+         
 
           <!-- Botón de inicio de sesión -->
           <q-btn
@@ -52,7 +60,16 @@
             class="full-width"
             :loading="loading"
           />
+          <div class="text-center q-mt-sm">
+  <q-btn
+    flat
+    label="¿Olvidaste tu contraseña?"
+    color="primary"
+    @click="goToRecuperar"
+  />
+</div>
         </q-form>
+        
       </q-card-section>
 
       <!-- Mensaje de error -->
@@ -68,7 +85,7 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../store/login.js';
+import { useAuthStore } from '../store/auth.js';
 
 export default {
   setup() {
@@ -78,6 +95,7 @@ export default {
     const loading = ref(false);
     const authStore = useAuthStore();
     const router = useRouter();
+    const mostrar = ref(false)
 
     const handleLogin = async () => {
       try {
@@ -91,13 +109,17 @@ export default {
         loading.value = false;
       }
     };
-
+    const goToRecuperar = () => {
+  router.push('/recuperar-password');
+};
     return {
       correo,
       contrasena,
       errorMessage,
       loading,
       handleLogin,
+      goToRecuperar,
+      mostrar
     };
   },
 };

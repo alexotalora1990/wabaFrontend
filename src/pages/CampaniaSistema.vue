@@ -202,7 +202,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useCampaniaSistemaStore } from '../store/campaniaSistema.js';
-import { useAuthStore } from '../store/login.js';
+import { useAuthStore } from '../store/auth.js';
 
 const $q = useQuasar();
 const storeCampanias = useCampaniaSistemaStore();

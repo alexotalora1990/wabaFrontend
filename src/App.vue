@@ -84,7 +84,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useAuthStore } from './store/login.js';
+import { useAuthStore } from './store/auth.js';
 
 export default {
   setup() {

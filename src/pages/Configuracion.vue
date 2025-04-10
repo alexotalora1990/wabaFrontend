@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useUsuariosStore } from "../store/usuarios.js";
 import { usePagoStore } from "../store/pagos.js";
-import { useAuthStore } from '../store/login.js';
+import { useAuthStore } from '../store/auth.js';
 import { Notify } from 'quasar';
 
 const usuariosStore = useUsuariosStore();
