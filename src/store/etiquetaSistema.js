@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref } from 'vue';
-import { useAuthStore } from '../store/login.js';
+import { useAuthStore } from '../store/auth.js';
 
 export const useEtiquetaSistemaStore = defineStore('etiquetaSistemas', () => {
   const useLogin = useAuthStore();

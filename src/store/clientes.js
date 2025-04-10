@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref, computed } from 'vue';
-import { useAuthStore } from '../store/login.js';
+import { useAuthStore } from '../store/auth.js';
 
 export const useClientesStore = defineStore('clientes', () => {
   const useLogin = useAuthStore();
@@ -214,49 +214,3 @@ export const useClientesStore = defineStore('clientes', () => {
     crearCliente,
   };
 });
-// import { defineStore } from 'pinia';
-// import axios from 'axios';
-// import { ref, computed } from 'vue';
-// import { useAuthStore } from './login.js';
-
-// export const useClientesStore = defineStore('clientes', () => {
-//   const authStore = useAuthStore();
-//   const clientes = ref([]);
-//   const loading = ref(false);
-//   const error = ref(null);
-
-//   // Obtiene el token del store de autenticación
-//   const token = computed(() => authStore.token);
-
-//   // Listar todos los clientes
-//   const ListarTodos = async () => {
-//     try {
-//       loading.value = true;
-//       error.value = null;
-
-//       if (!token.value) {
-//         console.error("Token no disponible en el store.");
-//         throw new Error('El token de autenticación no está disponible.');
-//       }
-
-//       console.log('Token utilizado para la solicitud:', token.value);
-
-//       const response = await axios.get('/clientes', {
-//         headers: {
-//           Authorization: `Bearer ${token.value}`
-//         }
-//       });
-
-//       clientes.value = response.data;
-//       console.log('Clientes obtenidos en el store:', response.data);
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error en ListarTodos:", error.message || error);
-//       throw error;
-//     } finally {
-//       loading.value = false;
-//     }
-//   };
-
-//   return { clientes, loading, error, ListarTodos };
-// });

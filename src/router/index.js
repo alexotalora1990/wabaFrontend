@@ -1,12 +1,14 @@
 
 
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '../store/login.js';  // Pinia store para manejar el estado de autenticación
+import { useAuthStore } from '../store/auth.js';  // Pinia store para manejar el estado de autenticación
 import { Notify } from 'quasar';
 
 const routes = [
   { path: '/', component: () => import('../pages/Home.vue') },
   { path: '/login', component: () => import('../pages/Login.vue') },  // Ruta de login
+  { path: '/recuperar-password', component: () => import('../pages/RecuperarPassword.vue') },
+  { path: '/reset-password/:token', component: () => import('../pages/ResetPassword.vue') },
   {path:'/usuarios', component:()=> import('../pages/Usuario.vue'), meta:{requiresAuth:true, allwedRoles:['admin']}},
   { path: '/clientes', component: () => import('../pages/Clientes.vue'), meta: { requiresAuth: true, allwedRoles:['admin','ayudante','usuario'] } },
   { path: '/configuracion', component: () => import('../pages/Configuracion.vue'), meta: { requiresAuth: true },allwedRoles:['admin','ayudante','usuario'] },
