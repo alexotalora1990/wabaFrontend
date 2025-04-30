@@ -2,11 +2,11 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref } from 'vue';
 import { useAuthStore } from './auth.js';
-import EtiquetaCliente from '../pages/EtiquetaCliente.vue';
 
-export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
+
+export const usePagoStore = defineStore('producto', () => {
   const useLogin = useAuthStore();
-  const etiquetaliente = ref([]);
+  const producto = ref([]);
   const loading = ref(false);
   const error = ref(null);
 
@@ -23,14 +23,14 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
 
       console.log('Token utilizado para la solicitud:', useLogin.token);
 
-      const response = await axios.get('etiquetaClientes', {
+      const response = await axios.get('productos', {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
 
-      EtiquetaCliente.value = response.data;
-      console.log('Etiquetas el Sistema obtenidos en el store:', response.data);
+      producto.value = response.data;
+      console.log('Productos obtenidos en el store:', response.data);
       return response.data;
     } catch (error) {
       console.error("Error en ListarTodos:", error.message || error);
@@ -53,17 +53,17 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
 
       console.log('Token utilizado para la solicitud:', useLogin.token);
 
-      const response = await axios.get('etiquetaClientes/listar/activos', {
+      const response = await axios.get('productos/listar/activos', {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
 
-      EtiquetaCliente.value = response.data;
-      console.log('Etiquetas activas obtenidos en el store:', response.data);
+     producto.value = response.data;
+      console.log('Productos activas obtenidos en el store:', response.data);
       return response.data;
     } catch (error) {
-      console.error("Error en ListarActivas:", error.message || error);
+      console.error("Error en Listar Activas:", error.message || error);
       throw error;
     } finally {
       loading.value = false;
@@ -83,51 +83,49 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
 
       console.log('Token utilizado para la solicitud:', useLogin.token);
 
-      const response = await axios.get('etiquetaClientes/listar/inactivos', {
+      const response = await axios.get('productos/listar/inactivos', {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
 
-      EtiquetaCliente.value = response.data;
-      console.log('Etiquetas del sistema inactivos obtenidos en el store:', response.data);
+      producto.value = response.data;
+      console.log('Productos del sistema inactivos obtenidos en el store:', response.data);
       return response.data;
     } catch (error) {
-      console.error("Error en ListarInactivos:", error.message || error);
+      console.error("Error en Listar Inactivos:", error.message || error);
       throw error;
     } finally {
       loading.value = false;
     }
   };
-  const crearEtiqueta = async (etiqueta) => {
-    console.log(etiqueta);
-    
+  const crearProducto = async (producto) => {
     try {
       loading.value = true;
       error.value = null;
   
-      const response = await axios.post('etiquetaClientes/agregar', etiqueta, {
+      const response = await axios.post('productos/agregar', producto, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
   
-      console.log('Etiqueta del Sistema creada:', response.data);
+      console.log('Produto del Sistema creada:', response.data);
       return response.data;
     } catch (err) {
-      console.error('Error al crear etiqueta:', err.message || err);
+      console.error('Error al crear producto:', err.message || err);
       throw err;
     } finally {
       loading.value = false;
     }
   };
   
-  const actualizarEtiqueta = async (id, etiqueta) => {
+  const actualizarProdcuto = async (id, producto) => {
     try {
       loading.value = true;
       error.value = null;
   
-      const response = await axios.put(`etiquetaClientes/actualizar/${id}`, etiqueta, {
+      const response = await axios.put(`produstos/actualizar/${id}`, producto, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
@@ -135,7 +133,7 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
   
       return response.data;
     } catch (err) {
-      console.error('Error en actualizar etiquetas :', err.message || err);
+      console.error('Error en actualizar producto :', err.message || err);
       throw err;
     } finally {
       loading.value = false;
@@ -143,7 +141,7 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
   };
   
 
-  const activarEtiqueta = async (id) => {
+  const activarProducto = async (id) => {
     try {
       loading.value = true;
       error.value = null;
@@ -153,25 +151,25 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
         throw new Error('El token de autenticación no está disponible.');
       }
 
-      console.log('Token utilizado para activar cliente:', useLogin.token);
+      console.log('Token utilizado para activar producto:', useLogin.token);
 
-      const response = await axios.put(`etiquetaClientes/activar/${id}`, {}, {
+      const response = await axios.put(`productos/activar/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
 
-      console.log(`Etiqueta ${id} activado correctamente:`, response.data);
+      console.log(`producto ${id} activado correctamente:`, response.data);
       return response.data;
     } catch (error) {
-      console.error(`Error al activar el etiquueta ${id}:`, error.message || error);
+      console.error(`Error al activar el producto ${id}:`, error.message || error);
       throw error;
     } finally {
       loading.value = false;
     }
   };
 
-  const desactivarEtiqueta = async (id) => {
+  const desactivarProducto = async (id) => {
     try {
       loading.value = true;
       error.value = null;
@@ -181,33 +179,33 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
         throw new Error('El token de autenticación no está disponible.');
       }
 
-      console.log('Token utilizado para desactivar Etiqueta:', useLogin.token);
+      console.log('Token utilizado para desactivar Producto:', useLogin.token);
 
-      const response = await axios.put(`etiquetaClientes/desactivar/${id}`, {}, {
+      const response = await axios.put(`produtos/desactivar/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
       });
 
-      console.log(`Etiqueta ${id} desactivado correctamente:`, response.data);
+      console.log(`Producto ${id} desactivado correctamente:`, response.data);
       return response.data;
     } catch (error) {
-      console.error(`Error al desactivar el etiqueta ${id}:`, error.message || error);
+      console.error(`Error al desactivar el producto${id}:`, error.message || error);
       throw error;
     } finally {
       loading.value = false;
     }
   };
   return {
-    EtiquetaCliente ,
+   pago ,
     loading,
     error,
     ListarTodos,
     ListarActivos,
     ListarInactivos,
-    activarEtiqueta,
-    desactivarEtiqueta,
-    actualizarEtiqueta,
-    crearEtiqueta,
+    activarProducto,
+    desactivarProducto,
+    actualizarProdcuto,
+    crearProducto,
   };
 });

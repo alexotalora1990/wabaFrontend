@@ -81,9 +81,9 @@
 
         <q-form @submit.prevent="guardarCampania">
           <q-card-section class="q-pt-md">
-            <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
+            <!-- <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
               option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
-              hide-bottom-space />
+              hide-bottom-space /> -->
 
             <q-input v-model="formulario.nombre" label="Nombre de la campaña" outlined
               :rules="[val => !!val || 'Campo obligatorio']" class="q-mb-md" />
