@@ -5,6 +5,11 @@ import { usePagoStore } from "../store/pagos.js";
 import { useAuthStore } from '../store/auth.js';
 import { Notify } from 'quasar';
 
+const modalQR = ref(false);
+const qrUrl = ref("http://localhost:4700/");
+
+
+
 const usuariosStore = useUsuariosStore();
 const pagoStore = usePagoStore();
 const authStore = useAuthStore();
@@ -86,23 +91,23 @@ const cambiarPlan = async () => {
           <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
           <p><strong>Correo:</strong> {{ usuario.correo }}</p>
 
-          <q-btn 
-            color="primary" 
-            label="Cambiar Contraseña" 
-            class="q-mt-sm"
-            @click="modalContrasena = true"
-          />
+          <q-btn color="primary" label="Cambiar Contraseña" class="q-mt-sm" @click="modalContrasena = true" />
         </div>
 
         <div class="plan-box">
           <div class="text-subtitle1">Plan Actual: <strong>{{ usuario.planActual || 'Sin plan' }}</strong></div>
           <div>Días restantes: {{ usuario.diasRestantes || 0 }}</div>
+          <q-btn color="green" label="Cambiar Plan" class="q-mt-sm" @click="modalPlan = true" />
+
+
+        </div>
+        <div>
           <q-btn 
-            color="green" 
-            label="Cambiar Plan" 
-            class="q-mt-sm" 
-            @click="modalPlan = true"
-          />
+          color="deep-purple" 
+          label="Conectar WhatsApp" 
+          class="q-mt-sm"
+          @click="modalQR = true"
+        />
         </div>
       </div>
     </div>
@@ -132,18 +137,43 @@ const cambiarPlan = async () => {
           <div class="text-h6">Cambiar Plan</div>
         </q-card-section>
         <q-card-section class="q-gutter-md">
-          <q-select 
-            v-model="nuevoPlanId" 
-            :options="planes.map(p => ({ label: `${p.nombre} - ${p.periodo}`, value: p._id }))" 
-            label="Selecciona un nuevo plan" 
-            outlined
-            emit-value 
-            map-options
-          />
+          <q-select v-model="nuevoPlanId"
+            :options="planes.map(p => ({ label: `${p.nombre} - ${p.periodo}`, value: p._id }))"
+            label="Selecciona un nuevo plan" outlined emit-value map-options />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="primary" v-close-popup />
           <q-btn label="Guardar" color="green" @click="cambiarPlan" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
+
+
+  <!-- modal codigo  qr -->
+  <div>
+    <q-dialog v-model="modalQR" persistent>
+      <q-card style="width: 500px; max-width: 90vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Escanear QR para conectar WhatsApp</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section class="flex flex-center q-pt-none">
+          <iframe 
+            :src="qrUrl" 
+            style="width: 100%; height: 400px; border: none;"
+            title="WhatsApp QR Connection"
+          ></iframe>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn 
+            label="Cerrar" 
+            color="primary" 
+            v-close-popup 
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -154,10 +184,16 @@ const cambiarPlan = async () => {
 .config-card {
   max-width: 700px;
 }
+
 .plan-box {
   position: absolute;
   top: 16px;
   right: 16px;
   text-align: right;
+}
+
+iframe {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -65,9 +65,9 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
-            <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
-              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
-              hide-bottom-space />
+            <!-- <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
+              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md"
+              hide-bottom-space /> -->
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
             <q-input outlined v-model="formulario.descripcion" label="Descripcion" class="q-my-md q-mx-md"
@@ -98,14 +98,14 @@ import { useQuasar, Notify } from "quasar";
 
 
 const storeEtiquetas = useEtiquetaClienteStore();
-const storeUsuarios=useUsuariosStore();
+const storeUsuarios = useUsuariosStore();
 const $q = useQuasar();
 
 // Estados
-const usuarios=[];
-const idUsuario=ref('')
-let datos={}
-let options=ref(usuarios)
+const usuarios = [];
+const idUsuario = ref('')
+let datos = {}
+let options = ref(usuarios)
 const etiquetas = ref([]);
 const busqueda = ref('');
 const loading = ref(false);
@@ -130,7 +130,7 @@ const formulario = ref({
   _id: null,
   nombre: '',
   descripcion: '',
-  idUsuario:''
+  idUsuario: ''
 
 });
 
@@ -160,23 +160,23 @@ const columnas = ref([
 // listar usuarios
 
 async function listarUsuarios() {
-  const response= await storeUsuarios.ListarActivos()
+  const response = await storeUsuarios.ListarActivos()
 
-  response.forEach(item =>{
-    datos={
-      label:item.nombre,
-      value:item._id
+  response.forEach(item => {
+    datos = {
+      label: item.nombre,
+      value: item._id
     }
     usuarios.push(datos)
   })
   console.log(usuarios);
- 
-} 
+
+}
 function filterFn(val, update, abort) {
-    update(() => {
-        const needle = val.toLowerCase();
-        options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
-    })
+  update(() => {
+    const needle = val.toLowerCase();
+    options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
+  })
 }
 
 

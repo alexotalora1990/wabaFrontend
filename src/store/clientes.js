@@ -108,6 +108,7 @@ export const useClientesStore = defineStore('clientes', () => {
     try {
       loading.value = true;
       error.value = null;
+  console.log(cliente);
   
       const response = await axios.post('clientes/agregar', cliente, {
         headers: {

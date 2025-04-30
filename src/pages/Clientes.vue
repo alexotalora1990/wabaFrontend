@@ -75,15 +75,7 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
-            <q-select v-if="!modoEdicion" 
-            outlined
-             v-model="formulario.idUsuario"
-              label="Usuario" 
-              :options="options"
-              option-value="value"
-               @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
-              hide-bottom-space />
-
+          
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
             <q-input outlined v-model="formulario.documento" label="Documento" class="q-my-md q-mx-md"
@@ -175,7 +167,9 @@ import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useClientesStore } from '../store/clientes.js';
 import { useUsuariosStore } from '../store/usuarios.js';
+import { useAuthStore } from '../store/auth.js'; // Asegúrate de que el path es correcto
 
+const authStore = useAuthStore();
 
 const $q = useQuasar();
 const storeClientes = useClientesStore();
@@ -217,7 +211,7 @@ const formulario = ref({
   direccion: '',
   ciudad: '',
   pais: '',
-  idUsuario:''
+  
 });
 
 // const modoEdicionPaso = ref(false);
@@ -398,7 +392,7 @@ const abrirFormulario = () => {
     direccion: '',
     ciudad: '',
     pais: '',
-    idUsuario:''
+   
   };
   mostrarFormulario.value = true;
 };
@@ -408,7 +402,7 @@ const editarDatos = (cliente) => {
   modoEdicion.value = true;
   formulario.value = {
     _id: cliente._id,
-    idUsuario:idUsuario.value.value,
+    
     nombre: cliente.nombre,
     documento: cliente.documento,
     correo: cliente.correo,
@@ -420,8 +414,30 @@ const editarDatos = (cliente) => {
   mostrarFormulario.value = true;
 };
 
+// const guardarDatos = async () => {
+//   try {
+//     if (modoEdicion.value) {
+//       await storeClientes.actualizarCliente(
+//         formulario.value._id,
+//         formulario.value
+//       );
+//     } else {
+//       await storeClientes.crearCliente(formulario.value);
+//     }
+//     await cargarDatos();
+//     mostrarFormulario.value = false;
+//     mostrarExito('Cliente guardado correctamente');
+//   } catch (error) {
+//     mostrarError('Error guardando cliente');
+//   }
+// };
 const guardarDatos = async () => {
   try {
+    if (!modoEdicion.value) {
+      // Asignar idUsuario al formulario
+      formulario.value.idUsuario = authStore.usuario._id; // o authStore.usuario.id según cómo lo guardes
+    }
+
     if (modoEdicion.value) {
       await storeClientes.actualizarCliente(
         formulario.value._id,
@@ -430,120 +446,15 @@ const guardarDatos = async () => {
     } else {
       await storeClientes.crearCliente(formulario.value);
     }
+
     await cargarDatos();
     mostrarFormulario.value = false;
     mostrarExito('Cliente guardado correctamente');
   } catch (error) {
+    console.error('Error al guardar cliente:', error);
     mostrarError('Error guardando cliente');
   }
 };
-
-
-// const eliminarCampania = async (idCampania) => {
-//       try {
-//         await storeCampanias.eliminarCampania(idCampania);
-//         console.log('Campaña eliminada exitosamente');
-//         // Aquí podrías actualizar la lista de campañas o mostrar un mensaje de éxito
-//       } catch (error) {
-//         console.error('Error al eliminar campaña:', error);
-//         // Aquí podrías mostrar un mensaje de error al usuario
-//       }
-//     };
-
-
-
-// const abrirPasos = (campania) => {
-//   campaniaSeleccionada.value = campania;
-//   pasos.value = campania.pasos;
-//   mostrarDialogoPasos.value = true;
-// };
-
-// const abrirCreacionPaso = () => {
-//   modoEdicionPaso.value = false;
-//   formularioPaso.value = { numero: '', link: '', descripcion: '' };
-//   mostrarDialogoPaso.value = true;
-// };
-
-
-
-
-// const editarPaso = (paso) => {
-//   modoEdicionPaso.value = true;
-//   formularioPaso.value = { ...paso };
-//   mostrarDialogoPaso.value = true;
-// };
-
-// const guardarPaso = async () => {
-//   try {
-//     if (modoEdicionPaso.value) {
-//       // Editar paso
-//       await storeCampanias.editarPaso(
-//         campaniaSeleccionada.value._id,
-//         formularioPaso.value._id,
-//         formularioPaso.value
-//       );
-
-//       // ✅ Actualizar el paso en la lista local en tiempo real
-//       const index = pasos.value.findIndex(p => p._id === formularioPaso.value._id);
-//       if (index !== -1) {
-//         // Usamos `.splice()` para que Vue detecte la modificación del array
-//         pasos.value.splice(index, 1, { ...formularioPaso.value });
-//       }
-//     } else {
-//       // Crear paso
-//       const nuevoPaso = await storeCampanias.agregarPaso(
-//         campaniaSeleccionada.value._id,
-//         formularioPaso.value
-//       );
-
-//       // ✅ Agregar el nuevo paso correctamente a la lista local
-//       pasos.value = [...pasos.value, nuevoPaso]; // Generamos una nueva referencia al array
-//       const index = pasos.value.findIndex(p => p._id === formularioPaso.value._id);
-//       if (index !== -1) {
-//         // Usamos `.splice()` para que Vue detecte la modificación del array
-//         pasos.value.splice(index, 1, { ...formularioPaso.value });
-//       }
-
-//     }
-
-//     mostrarDialogoPaso.value = false;
-//     cargarCampanias()
-//     mostrarExito('Paso guardado correctamente');
-//   } catch (error) {
-//     mostrarError('Error guardando paso');
-//   }
-// };
-
-
-
-
-// const confirmarEliminarPaso = (paso) => {
-//   $q.dialog({
-//     title: 'Confirmar',
-//     message: '¿Eliminar este paso?',
-//     cancel: true,
-//     persistent: true
-//   }).onOk(async () => {
-//     try {
-//       await storeCampanias.eliminarPaso(
-//         campaniaSeleccionada.value._id,
-//         paso._id
-//       );
-
-//       // 🔥 Forzar reactividad con `splice()`
-//       const index = pasos.value.findIndex(p => p._id === paso._id);
-//       if (index !== -1) {
-//         pasos.value.splice(index, 1);
-//       }
-
-//       mostrarExito('Paso eliminado correctamente');
-//     } catch (error) {
-//       mostrarError('Error eliminando paso');
-//     }
-//   });
-// };
-
-
 
 
 

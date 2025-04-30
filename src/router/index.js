@@ -19,7 +19,7 @@ const routes = [
   // { path: '/etiquetaCliente', component: () => import('../pages/EtiquetaCliente.vue'), meta: { requiresAuth: true } },
   // { path: '/campaniasSistema', component: () => import('../pages/CampaniaSistema.vue'), meta: { requiresAuth: true } },
   // {path:'/campaniasCliente',component:()=> import('../pages/CampaniaCliente.vue'),meta:{requiresAuth:true},},
-  
+  {path: '/producto', component:()=> import('../pages/Productos.vue'), meta: { requiresAuth: true },allwedRoles:['admin','ayudante','usuario'] },
 ];
  
 // Creación del router con protección de rutas
