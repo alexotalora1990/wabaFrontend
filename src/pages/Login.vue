@@ -9,7 +9,7 @@
     <q-card class="login-card">
       <q-card-section class="text-center">
         <q-avatar size="80px" class="logo">
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" alt="Logo" />
+          <img src="../LOGO.png" alt="Logo" />
         </q-avatar>
         <h2 class="q-mt-md">Iniciar Sesión</h2>
       </q-card-section>
@@ -86,11 +86,12 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../store/auth.js';
+import { Notify } from 'quasar';
 
 export default {
   setup() {
-    const correo = ref('josue@gmail.com');
-    const contrasena = ref('12345');
+    const correo = ref('alexotalora2022@gmail.com');
+    const contrasena = ref('123456');
     const errorMessage = ref('');
     const loading = ref(false);
     const authStore = useAuthStore();
@@ -101,9 +102,19 @@ export default {
       try {
         loading.value = true;
         await authStore.login(correo.value, contrasena.value);
+
+         Notify.create({
+          message: 'Ingreso exitoso',
+          color: 'green',  
+          position: 'top', 
+          timeout: 2000,    
+        });
+
         errorMessage.value = '';
         router.push('/clientes');
-      } catch (error) {
+      } 
+      
+      catch (error) {
         errorMessage.value = error.message || 'Error al iniciar sesión. Intenta nuevamente.';
       } finally {
         loading.value = false;
@@ -157,7 +168,6 @@ export default {
 
 .logo {
   background: white;
-  padding: 10px;
   border-radius: 50%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }

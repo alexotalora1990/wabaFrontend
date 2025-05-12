@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useAuthStore } from './auth.js';
 
 
-export const usePagoStore = defineStore('producto', () => {
+export const useProductosStore = defineStore('producto', () => {
   const useLogin = useAuthStore();
   const producto = ref([]);
   const loading = ref(false);
@@ -120,12 +120,12 @@ export const usePagoStore = defineStore('producto', () => {
     }
   };
   
-  const actualizarProdcuto = async (id, producto) => {
+  const actualizarProducto = async (id, producto) => {
     try {
       loading.value = true;
       error.value = null;
   
-      const response = await axios.put(`produstos/actualizar/${id}`, producto, {
+      const response = await axios.put(`productos/actualizar/${id}`, producto, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
@@ -181,7 +181,7 @@ export const usePagoStore = defineStore('producto', () => {
 
       console.log('Token utilizado para desactivar Producto:', useLogin.token);
 
-      const response = await axios.put(`produtos/desactivar/${id}`, {}, {
+      const response = await axios.put(`productos/desactivar/${id}`, {}, {
         headers: {
           Authorization: `Bearer ${useLogin.token}`,
         },
@@ -197,7 +197,7 @@ export const usePagoStore = defineStore('producto', () => {
     }
   };
   return {
-   pago ,
+   producto ,
     loading,
     error,
     ListarTodos,
@@ -205,7 +205,7 @@ export const usePagoStore = defineStore('producto', () => {
     ListarInactivos,
     activarProducto,
     desactivarProducto,
-    actualizarProdcuto,
+    actualizarProducto,
     crearProducto,
   };
 });
