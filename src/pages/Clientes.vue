@@ -46,14 +46,9 @@
               {{ props.row.estado ? "Desactivar" : "Activar" }}
             </q-tooltip>
           </q-btn>
-          <q-btn flat color="teal" icon="list">
-            <q-tooltip>Ver Etiquetas</q-tooltip>
+          <q-btn flat color="teal" icon="visibility" @click="verCliente(props.row)">
+            <q-tooltip>Ver</q-tooltip>
           </q-btn>
-
-
-
-
-
         </q-td>
       </template>
     </q-table>
@@ -75,7 +70,7 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
-          
+
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
             <q-input outlined v-model="formulario.documento" label="Documento" class="q-my-md q-mx-md"
@@ -100,65 +95,106 @@
       </q-card>
     </q-dialog>
 
-    <!-- Diálogo para Ver/Editar Pasos -->
-    <q-dialog v-model="mostrarDialogoPasos" full-width>
-      <q-card>
-        <q-card-section class="bg-primary text-white">
-          <div class="text-h6">
-            Pasos de: {{ campaniaSeleccionada?.nombre }}
-          </div>
-        </q-card-section>
+    <!-- Diálogo para Ver Detalles del Cliente -->
+<q-dialog v-model="mostrarDialogoDetalles" persistent>
+  <q-card style="min-width: 500px">
+    <q-card-section class="bg-primary text-white">
+      <div class="row items-center justify-between">
+        <div class="text-h6">
+          Detalles de Cliente
+        </div>
+        <!-- Botón de Cerrar (X) en la esquina superior derecha -->
+        <q-btn flat dense icon="close" class="text-white" v-close-popup />
+      </div>
+    </q-card-section>
 
-        <q-card-section>
-          <q-table :rows="pasos" :columns="columnasPasos" row-key="_id" flat bordered>
-            <template v-slot:body-cell-acciones="props">
-              <q-td :props="props" class="q-gutter-x-sm">
-                <!-- Botón de editar con tooltip -->
-                <q-btn flat color="blue" icon="edit" @click="editarPaso(props.row)">
-                  <q-tooltip>Editar paso</q-tooltip>
-                </q-btn>
+    <q-card-section>
+      <div><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</div>
+      <div><strong>Documento:</strong> {{ clienteSeleccionado?.documento }}</div>
+      <div><strong>Correo:</strong> {{ clienteSeleccionado?.correo }}</div>
+      <div><strong>WhatsApp:</strong> {{ clienteSeleccionado?.wp }}</div>
+      <div><strong>Dirección:</strong> {{ clienteSeleccionado?.direccion }}</div>
+      <div><strong>Ciudad:</strong> {{ clienteSeleccionado?.ciudad }}</div>
+      <div><strong>País:</strong> {{ clienteSeleccionado?.pais }}</div>
+    </q-card-section>
 
-                <!-- Botón de eliminar con tooltip -->
-                <q-btn flat color="red" icon="delete" @click="confirmarEliminarPaso(props.row)">
-                  <q-tooltip>Eliminar paso</q-tooltip>
-                </q-btn>
-              </q-td>
-            </template>
-          </q-table>
+    <!-- Botones para Asignar Etiqueta, Asignar Campaña y Enviar Mensaje -->
+    <q-card-actions align="right">
+      <q-btn flat label="Asignar Etiqueta" color="primary" @click="mostrarSelectEtiqueta = true" class="q-mr-md" />
+      <q-btn flat label="Asignar Campaña" color="primary" @click="mostrarSelectCampania = true" class="q-mr-md" />
+      <q-btn flat label="Enviar mensaje" color="primary" @click="abrirModalMensaje(clienteSeleccionado)" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
 
-          <q-btn color="primary" icon="add" label="Nuevo Paso" class="q-mt-md" @click="abrirCreacionPaso" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+<!-- Modal para Enviar mensaje (sin los botones de asignar etiqueta y campaña) -->
+<q-dialog v-model="mostrarModalMensaje" persistent>
+  <q-card style="min-width: 500px">
+    <q-card-section class="bg-primary text-white">
+      <div class="text-h6">
+        Enviar mensaje a {{ clienteSeleccionado?.nombre }}
+      </div>
+    </q-card-section>
 
-    <!-- Diálogo para Crear/Editar Paso -->
-    <q-dialog v-model="mostrarDialogoPaso">
-      <q-card style="min-width: 500px">
-        <q-card-section class="bg-primary text-white">
-          <div class="text-h6">
-            {{ modoEdicionPaso ? 'Editar Paso' : 'Nuevo Paso' }}
-          </div>
-        </q-card-section>
+    <q-card-section>
+      <q-input v-model="mensaje" label="Escribe tu mensaje" type="textarea" outlined />
+    </q-card-section>
 
-        <q-form @submit.prevent="guardarPaso">
-          <q-card-section class="q-pt-md">
-            <q-input v-model.number="formularioPaso.numero" label="Número de paso" type="number" outlined
-              :rules="[val => val > 0 || 'Número inválido']" class="q-mb-md" />
+    <q-card-actions align="right">
+      <q-btn flat label="Cancelar" color="red" v-close-popup />
+      <q-btn flat label="Enviar" color="primary" @click="enviarMensaje" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
 
-            <q-input v-model="formularioPaso.link" label="URL" outlined :rules="[val => !!val || 'URL requerida']"
-              class="q-mb-md" />
+<!-- Dialogo para Asignar Etiqueta -->
+<q-dialog v-model="mostrarSelectEtiqueta" persistent>
+  <q-card style="min-width: 500px">
+    <q-card-section class="bg-primary text-white">
+      <div class="text-h6">Asignar Etiqueta</div>
+    </q-card-section>
 
-            <q-input v-model="formularioPaso.descripcion" label="Descripción" outlined
-              :rules="[val => !!val || 'Descripción requerida']" />
-          </q-card-section>
+    <q-card-section>
+      <q-select
+        v-model="etiquetaSeleccionada"
+        :options="etiquetas"
+        label="Selecciona una etiqueta"
+        outlined
+        dense
+        @update:modelValue="asignarEtiqueta"
+      />
+    </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn flat label="Cancelar" v-close-popup />
-            <q-btn type="submit" color="primary" :label="modoEdicionPaso ? 'Actualizar' : 'Crear'" />
-          </q-card-actions>
-        </q-form>
-      </q-card>
-    </q-dialog>
+    <q-card-actions align="right">
+      <q-btn flat label="Cancelar" color="red" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+<!-- Dialogo para Asignar Campaña -->
+<q-dialog v-model="mostrarSelectCampania" persistent>
+  <q-card style="min-width: 500px">
+    <q-card-section class="bg-primary text-white">
+      <div class="text-h6">Asignar Campaña</div>
+    </q-card-section>
+
+    <q-card-section>
+      <q-select
+        v-model="campaniaSeleccionada"
+        :options="campanias"
+        label="Selecciona una campaña"
+        outlined
+        dense
+        @update:modelValue="asignarCampania"
+      />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancelar" color="red" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
   </div>
 </template>
 
@@ -168,19 +204,99 @@ import { useQuasar } from 'quasar';
 import { useClientesStore } from '../store/clientes.js';
 import { useUsuariosStore } from '../store/usuarios.js';
 import { useAuthStore } from '../store/auth.js'; // Asegúrate de que el path es correcto
+import { useCampaniaClienteStore } from '../store/campaniaCliente.js';
+import { useEtiquetaClienteStore } from "../store/etiquetaCliente.js";
 
 const authStore = useAuthStore();
 
 const $q = useQuasar();
 const storeClientes = useClientesStore();
-const storeUsuarios=useUsuariosStore();
+const storeUsuarios = useUsuariosStore();
+const storeCampanias = useCampaniaClienteStore();
+const storeEtiquetas = useEtiquetaClienteStore();
+
+// Campañas
+
+const mostrarSelectCampania = ref(false);
+const campaniaSeleccionada = ref(null);
+const campanias = ref([]);
+
+// Obtener las campañas desde la API (similarly to how etiquetas were fetched)
+const cargarCampanias = async () => {
+  try {
+    const response = await storeCampanias.ListarTodos(); // Asegúrate de que esta función esté en tu store
+    campanias.value = response.map(campania => ({
+      label: campania.nombre, // Nombre de la campaña
+      value: campania._id     // ID de la campaña
+    }));
+  } catch (err) {
+    console.error('Error cargando campañas:', err);
+  }
+};
+
+// Asignar campaña al cliente seleccionado
+const asignarCampania = () => {
+  if (campaniaSeleccionada.value) {
+    console.log('Campaña asignada:', campaniaSeleccionada.value);
+    // Aquí deberías enviar la campaña seleccionada al cliente
+    // Puedes agregar una función para hacer la asignación en tu API
+    mostrarSelectCampania.value = false; // Cerrar el modal después de la asignación
+  }
+};
+
+// Etiquetas
+
+
+// Variables para manejar la selección
+const mostrarSelectEtiqueta = ref(false);
+const etiquetaSeleccionada = ref(null);
+const etiquetas = ref([]);
+
+// Obtener las etiquetas desde la API
+const cargarEtiquetas = async () => {
+  try {
+    const response = await storeEtiquetas.ListarTodos(); // Método para obtener las etiquetas
+    etiquetas.value = response.map(etiqueta => ({
+      label: etiqueta.nombre, // Nombre de la etiqueta
+      value: etiqueta._id    // ID de la etiqueta
+    }));
+  } catch (err) {
+    console.error('Error cargando etiquetas:', err);
+  }
+};
+
+
+
+// Asignar etiqueta al cliente seleccionado
+const asignarEtiqueta = async () => {
+  if (etiquetaSeleccionada.value) {
+    try {
+      // Llamada a la API para asignar la etiqueta al cliente
+      await storeClientes.asignarEtiqueta(clienteSeleccionado.value._id, etiquetaSeleccionada.value);
+      console.log('Etiqueta asignada correctamente');
+      $q.notify({
+        type: 'positive',
+        message: 'Etiqueta asignada correctamente',
+        position: 'top-right'
+      });
+      mostrarSelectEtiqueta.value = false; // Cerrar el modal después de la asignación
+    } catch (error) {
+      console.error('Error al asignar etiqueta:', error);
+      $q.notify({
+        type: 'negative',
+        message: 'Error al asignar etiqueta',
+        position: 'top-right'
+      });
+    }
+  }
+};
 
 // Estados
 
-const usuarios=[];
-const idUsuario=ref('')
-let datos={}
-let options=ref(usuarios)
+const usuarios = [];
+const idUsuario = ref('')
+let datos = {}
+let options = ref(usuarios)
 const clientes = ref([]);
 const busqueda = ref('');
 const loading = ref(false);
@@ -197,8 +313,10 @@ const opcionesFiltro = [
 
 // Diálogos
 const mostrarFormulario = ref(false);
-const mostrarDialogoPasos = ref(false);
-const mostrarDialogoPaso = ref(false);
+const mostrarDialogoDetalles = ref(false);
+const mostrarModalMensaje = ref(false);
+const mensaje = ref('');
+const clienteSeleccionado = ref(null);
 
 // Formularios
 const modoEdicion = ref(false);
@@ -211,20 +329,10 @@ const formulario = ref({
   direccion: '',
   ciudad: '',
   pais: '',
-  
+
 });
 
-// const modoEdicionPaso = ref(false);
-// const formularioPaso = ref({
-//   _id: null,
-//   numero: '',
-//   link: '',
-//   descripcion: ''
-// });
 
-// // Datos temporales
-// const clienteSeleccionado = ref(null);
-// const pasos = ref([]);
 
 
 const rules = {
@@ -261,50 +369,35 @@ const rules = {
 // Columnas de la tabla
 const columnas = [
   { name: 'nombre', label: 'Nombre', field: 'nombre', align: 'center' },
-  { name: 'correo', label: 'Correo', field: 'correo', align: 'center' },
   { name: 'wp', label: 'WhatsApp', field: 'wp', align: 'center' },
-
-  { name: 'documento', label: 'Documento', field: 'documento', align: 'center' },
-  { name: 'direccion', label: 'Dirección', field: 'direccion', align: 'center' },
-  { name: 'ciudad', label: 'Ciudad', field: 'ciudad', align: 'center' },
-  { name: 'pais', label: 'País', field: 'pais', align: 'center' },
-  { name: 'blacklist_estado', label: 'Estado en Blacklist', field: row => row.blacklist.estado, align: 'center' },
-  { name: 'blacklist_descripcion', label: 'Descripción en Blacklist', field: row => row.blacklist.descripcion, align: 'center' },
-  { name: 'etiquetas', label: 'Etiquetas', field: 'etiquetas', align: 'center' },
-  { name: 'campaña', label: 'Campañas', field: 'campaña', align: 'center' },
   { name: 'estado', label: 'Estado', field: 'estado', align: 'center' },
-  { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' }
+  { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' },
 ];
 
-// const columnasPasos = [
-//   { name: 'numero', label: 'Paso', field: 'numero', align: 'left' },
-//   { name: 'descripcion', label: 'Descripción', field: 'descripcion' },
-//   { name: 'link', label: 'URL', field: 'link' },
-//   { name: 'acciones', label: 'Acciones', align: 'center' }
-// ];
+
 
 
 
 // Método para cargar campañas según el filtro
 
 async function listarUsuarios() {
-  const response= await storeUsuarios.ListarActivos()
+  const response = await storeUsuarios.ListarActivos()
 
-  response.forEach(item =>{
-    datos={
-      label:item.nombre,
-      value:item._id
+  response.forEach(item => {
+    datos = {
+      label: item.nombre,
+      value: item._id
     }
     usuarios.push(datos)
   })
   console.log(usuarios);
- 
-} 
+
+}
 function filterFn(val, update, abort) {
-    update(() => {
-        const needle = val.toLowerCase();
-        options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
-    })
+  update(() => {
+    const needle = val.toLowerCase();
+    options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
+  })
 }
 
 const cargarDatos = async () => {
@@ -356,8 +449,15 @@ watch(filtroSeleccionado, () => {
 onMounted(() => {
   cargarDatos();
   listarUsuarios()
+  cargarCampanias();
+    cargarEtiquetas();
 });
 
+// Método para abrir el formulario de detalles del cliente
+const verCliente = (cliente) => {
+  clienteSeleccionado.value = cliente;
+  mostrarDialogoDetalles.value = true;
+};
 // Cambiar estado de la campaña
 const toggleEstado = async (cliente) => {
   try {
@@ -392,7 +492,7 @@ const abrirFormulario = () => {
     direccion: '',
     ciudad: '',
     pais: '',
-   
+
   };
   mostrarFormulario.value = true;
 };
@@ -402,7 +502,7 @@ const editarDatos = (cliente) => {
   modoEdicion.value = true;
   formulario.value = {
     _id: cliente._id,
-    
+
     nombre: cliente.nombre,
     documento: cliente.documento,
     correo: cliente.correo,
@@ -414,23 +514,14 @@ const editarDatos = (cliente) => {
   mostrarFormulario.value = true;
 };
 
-// const guardarDatos = async () => {
-//   try {
-//     if (modoEdicion.value) {
-//       await storeClientes.actualizarCliente(
-//         formulario.value._id,
-//         formulario.value
-//       );
-//     } else {
-//       await storeClientes.crearCliente(formulario.value);
-//     }
-//     await cargarDatos();
-//     mostrarFormulario.value = false;
-//     mostrarExito('Cliente guardado correctamente');
-//   } catch (error) {
-//     mostrarError('Error guardando cliente');
-//   }
-// };
+// Método para abrir el modal de mensaje
+const abrirModalMensaje = (cliente) => {
+  clienteSeleccionado.value = cliente;
+  mensaje.value = `Hola ${cliente.nombre}, ¿cómo estás?`;  // Mensaje por defecto
+  mostrarModalMensaje.value = true;
+};
+
+
 const guardarDatos = async () => {
   try {
     if (!modoEdicion.value) {
@@ -496,8 +587,10 @@ const mostrarError = (mensaje) => {
 .shadow-1 {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
+
 .custom-border {
-  border: 2px solid black /* Borde más grueso y color blanco */
-  
+  border: 2px solid black
+    /* Borde más grueso y color blanco */
+
 }
 </style>

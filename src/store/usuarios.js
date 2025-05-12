@@ -196,6 +196,44 @@ export const useUsuariosStore = defineStore('usuarios', () => {
       loading.value = false;
     }
   };
+  // const cambiarPlanMembresia = async (usuarioId, nuevoPlanId) => {
+  //   if (!usuarioId || !nuevoPlanId) {
+  //     console.error("Faltan parámetros: usuarioId o nuevoPlanId.");
+  //     return;
+  //   }
+  
+  //   try {
+  //     loading.value = true;
+  //     error.value = null;
+  
+  //     if (!useLogin.token) {
+  //       console.error("Token no disponible en el store.");
+  //       throw new Error("El token de autenticación no está disponible.");
+  //     }
+  
+  //     console.log(`Cambiando plan del usuario ${usuarioId} al plan ${nuevoPlanId}`);
+  
+  //     const response = await axios.put(
+  //       `usuarios/cambiarPlan`, 
+  //       { usuarioId, nuevoPlanId },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${useLogin.token}`,
+  //         },
+  //       }
+  //     );
+  
+  //     console.log("Plan actualizado correctamente:", response.data);
+  //     return response.data;
+  //   } catch (err) {
+  //     console.error("Error al cambiar el plan:", err.response?.data || err.message || err);
+  //     error.value = err.response?.data?.error || "Error desconocido al cambiar el plan.";
+  //     throw err;
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // };
+
   const cambiarPlanMembresia = async (usuarioId, nuevoPlanId) => {
     if (!usuarioId || !nuevoPlanId) {
       console.error("Faltan parámetros: usuarioId o nuevoPlanId.");
@@ -213,8 +251,9 @@ export const useUsuariosStore = defineStore('usuarios', () => {
   
       console.log(`Cambiando plan del usuario ${usuarioId} al plan ${nuevoPlanId}`);
   
+      // Realizamos la solicitud para cambiar el plan
       const response = await axios.put(
-        `usuarios/cambiarPlan`, 
+        `usuarios/cambiarPlan`,
         { usuarioId, nuevoPlanId },
         {
           headers: {
@@ -222,6 +261,20 @@ export const useUsuariosStore = defineStore('usuarios', () => {
           },
         }
       );
+  
+      // Suponiendo que la respuesta contiene los datos del nuevo plan con los días restantes
+      const nuevoPlan = response.data.plan;
+  
+      // Actualizamos el plan y los días restantes en el store de usuarios
+      const usuarioIndex = usuarios.value.findIndex(u => u._id === usuarioId);
+      if (usuarioIndex !== -1) {
+        usuarios.value[usuarioIndex].planActual = nuevoPlan.nombre;
+        usuarios.value[usuarioIndex].diasRestantes = nuevoPlan.dias;
+      }
+  
+      // Actualizamos el plan y los días en el authStore también para el usuario actual
+      useLogin.usuario.planActual = nuevoPlan.nombre;
+      useLogin.usuario.diasRestantes = nuevoPlan.dias;
   
       console.log("Plan actualizado correctamente:", response.data);
       return response.data;
@@ -233,7 +286,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
       loading.value = false;
     }
   };
-
+  
   const cambiarContrasena = async (currentPassword, newPassword) => {
     try {
       const response = await axios.post(

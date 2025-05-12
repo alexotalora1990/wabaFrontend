@@ -115,7 +115,7 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
       console.log('Etiqueta del Sistema creada:', response.data);
       return response.data;
     } catch (err) {
-      console.error('Error al crear etiqueta:', err.message || err);
+      console.error('Error al crear etiqueta:', err.message || err); 
       throw err;
     } finally {
       loading.value = false;

@@ -4,8 +4,8 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+          <q-avatar class="logo">
+           <img src="./Avatar.png" alt="Logo" class="avatar-img" />
           </q-avatar>
           WabaCRM
         </q-toolbar-title>
@@ -67,7 +67,7 @@
           </q-item-section>
           <q-item-section>Pago </q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/configuracion">
+        <q-item clickable v-ripple to="/producto">
           <q-item-section avatar>
             <q-icon name="inventory" />
           </q-item-section>
@@ -120,5 +120,11 @@ export default {
 </script>
 
 <style>
-/* Estilos personalizados */
+.avatar-img {
+  width: 30px;  
+  height: 30px; 
+  object-fit: cover; 
+  background-color: white;
+  padding: 15%;
+}
 </style>

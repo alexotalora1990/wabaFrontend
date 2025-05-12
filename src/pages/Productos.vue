@@ -15,7 +15,7 @@
       </div>
   
       <!-- Tabla de Campañas -->
-      <q-table title="Productos" title-class="text-primary text-weight-bolder text-h5" :rows="pagos"
+      <q-table title="Productos" title-class="text-primary text-weight-bolder text-h5" :rows="producto"
         :columns="columnas" row-key="_id" :loading="loading" :filter="busqueda" class="shadow-1">
         <template v-slot:top-right>
           <q-input v-model="busqueda" outlined dense placeholder="Buscar..." class="q-ml-md">
@@ -57,7 +57,7 @@
           <q-card-section class="bg-primary text-white">
             <div class="row items-center justify-between">
               <div class="text-h6">
-                {{ modoEdicion ? 'Editar Pago' : 'Nuevo Pago' }}
+                {{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}
               </div>
               <q-btn flat dense icon="close" class="text-white" v-close-popup />
             </div>
@@ -65,15 +65,14 @@
   
           <q-form @submit.prevent="guardarDatos">
             <q-card-section class="q-pt-md">
+              <q-input outlined v-model="formulario.codigo" label="Codigo" class="q-my-md q-mx-md"
+                :rules="rules.codigo" hide-bottom-space />
               <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
                 hide-bottom-space />
-              <q-input outlined v-model="formulario.valor" label="Precio" class="q-my-md q-mx-md"
-                :rules="rules.valor" hide-bottom-space />
-                <q-input outlined v-model="formulario.periodo" label="Periodo" class="q-my-md q-mx-md"
-                :rules="rules.periodo" hide-bottom-space />
-                <q-input outlined v-model="formulario.descripcion" label="Descripcion" class="q-my-md q-mx-md"
-                :rules="rules.descripcion" hide-bottom-space />
-  
+              
+                <q-input outlined v-model="formulario.imagen" label="Imagen" class="q-my-md q-mx-md"
+                :rules="rules.imagen" hide-bottom-space />
+                  
             </q-card-section>
   
             <q-card-actions align="right">
