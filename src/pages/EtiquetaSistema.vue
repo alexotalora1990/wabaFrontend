@@ -67,7 +67,7 @@
           <q-card-section class="q-pt-md">
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
-            <q-input outlined v-model="formulario.descripcion" label="Documento" class="q-my-md q-mx-md"
+            <q-input outlined v-model="formulario.descripcion" label="Descripción" class="q-my-md q-mx-md"
               :rules="rules.descripcion" hide-bottom-space />
 
           </q-card-section>

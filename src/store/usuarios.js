@@ -40,6 +40,38 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     }
   };
 
+  const obtenerUsuarioPorId = async (id) => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    if (!useLogin.token) {
+      console.error("Token no disponible en el store.");
+      throw new Error('El token de autenticación no está disponible.');
+    }
+
+    console.log('Token utilizado para la solicitud:', useLogin.token);
+
+    // Realiza la solicitud al backend para obtener el usuario por su ID
+    const response = await axios.get(`usuarios/${id}`, {  // Asegúrate de que la URL sea correcta
+      headers: {
+        Authorization: `Bearer ${useLogin.token}`,
+      },
+    });
+
+    console.log('Usuario obtenido:', response.data);
+    return response.data;  // Devuelve los datos del usuario obtenido
+
+  } catch (error) {
+    console.error("Error al obtener usuario por ID:", error.message || error);
+    error.value = error.message || "Error al obtener usuario por ID";
+    throw error;
+  } finally {
+    loading.value = false;
+  }
+};
+
+
   // Listar clientes activos
   const ListarActivos = async () => {
     try {
@@ -196,43 +228,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
       loading.value = false;
     }
   };
-  // const cambiarPlanMembresia = async (usuarioId, nuevoPlanId) => {
-  //   if (!usuarioId || !nuevoPlanId) {
-  //     console.error("Faltan parámetros: usuarioId o nuevoPlanId.");
-  //     return;
-  //   }
-  
-  //   try {
-  //     loading.value = true;
-  //     error.value = null;
-  
-  //     if (!useLogin.token) {
-  //       console.error("Token no disponible en el store.");
-  //       throw new Error("El token de autenticación no está disponible.");
-  //     }
-  
-  //     console.log(`Cambiando plan del usuario ${usuarioId} al plan ${nuevoPlanId}`);
-  
-  //     const response = await axios.put(
-  //       `usuarios/cambiarPlan`, 
-  //       { usuarioId, nuevoPlanId },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${useLogin.token}`,
-  //         },
-  //       }
-  //     );
-  
-  //     console.log("Plan actualizado correctamente:", response.data);
-  //     return response.data;
-  //   } catch (err) {
-  //     console.error("Error al cambiar el plan:", err.response?.data || err.message || err);
-  //     error.value = err.response?.data?.error || "Error desconocido al cambiar el plan.";
-  //     throw err;
-  //   } finally {
-  //     loading.value = false;
-  //   }
-  // };
+ 
 
   const cambiarPlanMembresia = async (usuarioId, nuevoPlanId) => {
     if (!usuarioId || !nuevoPlanId) {
@@ -322,6 +318,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     actualizarUsuario,
     crearUsuario,
     cambiarPlanMembresia,
-    cambiarContrasena
+    cambiarContrasena,
+    obtenerUsuarioPorId
   };
 });

@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await axios.post('/login', { correo, contrasena });
 
-        console.log('Token recibido del backend:', response.data.token);
+        console.log('Token recibido del backend:', response.data);
         console.log('Rol recibido del backend:', response.data.user.rol);
         console.log('Usuario recibido del backend:', response.data.user);
 

@@ -65,7 +65,7 @@
         <q-form @submit.prevent="registrarUsuario">
           <q-card-section>
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md" />
-            <q-input outlined v-model="formulario.telefono" label="Teléfono" class="q-my-md" />
+            <q-input outlined v-model="formulario.wp" label="Whatsap" class="q-my-md" />
             <q-input outlined v-model="formulario.correo" label="Correo electrónico" type="email" class="q-my-md" />
             <q-input outlined v-model="formulario.contrasena" label="Contraseña" type="password" class="q-my-md" />
           </q-card-section>
@@ -92,7 +92,7 @@ const storeUsuarios = useUsuariosStore();
 const mostrarFormulario = ref(false);
 const formulario = ref({
   nombre: '',
-  telefono: '',
+  wp: '',
   correo: '',
   contrasena: '',
   rol: 'usuario',

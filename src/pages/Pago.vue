@@ -73,6 +73,7 @@
               :rules="rules.periodo" hide-bottom-space />
               <q-input outlined v-model="formulario.descripcion" label="Descripcion" class="q-my-md q-mx-md"
               :rules="rules.descripcion" hide-bottom-space />
+              
 
           </q-card-section>
 
@@ -128,6 +129,7 @@ const formulario = ref({
   valor: '',
   periodo: '',
   descripcion:'',
+  
 
 });
 
@@ -160,7 +162,7 @@ const columnas = ref([
   { name: 'valor', label: 'Valor', field: 'valor', align: 'center' },
   { name: 'periodo', label: 'Periodo', field: 'periodo', align: 'center' },
   { name: 'descripcion', label: 'Descripcion', field: 'descripcion', align: 'center' },
-  { name: 'estado',label:'Estado',field:'estado',align:'center'},
+    { name: 'estado',label:'Estado',field:'estado',align:'center'},
   { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' }
 ]);
 
@@ -246,6 +248,7 @@ const abrirFormulario = () => {
     valor: '',
     periodo:'',
     descripcion:'',
+   
   };
   mostrarFormulario.value = true;
 };
@@ -259,6 +262,7 @@ const editarDatos = (pago) => {
     valor: pago.valor,
     periodo:pago.periodo,
     descripcion:pago.descripcion,
+    
 
   };
   mostrarFormulario.value = true;

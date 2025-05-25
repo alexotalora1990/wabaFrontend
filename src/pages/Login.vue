@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="login-container">
     <!-- Fondo degradado -->
@@ -34,7 +32,7 @@
           <q-input
             v-model="contrasena"
             label="Contraseña"
-           :type="mostrar ? 'text' : 'password'"
+            :type="mostrar ? 'text' : 'password'"
             outlined
             dense
             :rules="[val => !!val || 'La contraseña es obligatoria']"
@@ -43,14 +41,13 @@
               <q-icon name="lock" />
             </template>
             <template #append>
-      <q-icon
-        :name="mostrar ? 'visibility_off' : 'visibility'"
-        @click="mostrar = !mostrar"
-        class="cursor-pointer"
-      />
-    </template>
+              <q-icon
+                :name="mostrar ? 'visibility_off' : 'visibility'"
+                @click="mostrar = !mostrar"
+                class="cursor-pointer"
+              />
+            </template>
           </q-input>
-         
 
           <!-- Botón de inicio de sesión -->
           <q-btn
@@ -61,15 +58,14 @@
             :loading="loading"
           />
           <div class="text-center q-mt-sm">
-  <q-btn
-    flat
-    label="¿Olvidaste tu contraseña?"
-    color="primary"
-    @click="goToRecuperar"
-  />
-</div>
+            <q-btn
+              flat
+              label="¿Olvidaste tu contraseña?"
+              color="primary"
+              @click="goToRecuperar"
+            />
+          </div>
         </q-form>
-        
       </q-card-section>
 
       <!-- Mensaje de error -->
@@ -96,33 +92,57 @@ export default {
     const loading = ref(false);
     const authStore = useAuthStore();
     const router = useRouter();
-    const mostrar = ref(false)
+    const mostrar = ref(false);
 
     const handleLogin = async () => {
       try {
         loading.value = true;
         await authStore.login(correo.value, contrasena.value);
 
-         Notify.create({
-          message: 'Ingreso exitoso',
-          color: 'green',  
-          position: 'top', 
-          timeout: 2000,    
-        });
+        // Verifica el rol después del login
+        const rolUsuario = authStore.usuario?.rol;
+        if (rolUsuario === 'admin') {
+          Notify.create({
+            message: 'Ingreso exitoso como Admin',
+            color: 'green',
+            position: 'top',
+            timeout: 2000,
+          });
+          router.push('/usuarios'); // Redirige a la vista de usuarios si es admin
+        } else if (rolUsuario === 'usuario') {
+          Notify.create({
+            message: 'Ingreso exitoso como Usuario',
+            color: 'green',
+            position: 'top',
+            timeout: 2000,
+          });
+          router.push('/clientes'); // Redirige a la vista de clientes si es usuario
+        } else {
+          Notify.create({
+            message: 'Rol no reconocido',
+            color: 'negative',
+            position: 'top',
+          });
+          errorMessage.value = 'Rol no reconocido';
+        }
 
         errorMessage.value = '';
-        router.push('/clientes');
-      } 
-      
-      catch (error) {
+      } catch (error) {
         errorMessage.value = error.message || 'Error al iniciar sesión. Intenta nuevamente.';
+        Notify.create({
+          message: errorMessage.value,
+          color: 'negative',
+          position: 'top',
+        });
       } finally {
         loading.value = false;
       }
     };
+
     const goToRecuperar = () => {
-  router.push('/recuperar-password');
-};
+      router.push('/recuperar-password');
+    };
+
     return {
       correo,
       contrasena,
@@ -130,7 +150,7 @@ export default {
       loading,
       handleLogin,
       goToRecuperar,
-      mostrar
+      mostrar,
     };
   },
 };

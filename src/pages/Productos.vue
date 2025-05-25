@@ -7,7 +7,7 @@
   
       <!-- Filtros y Botón Crear -->
       <div class="row q-mb-md items-center">
-        <q-btn color="primary" icon="add" label="Nueva Pago" class="q-mr-md" @click="abrirFormulario" />
+        <q-btn color="primary" icon="add" label="Nueva Producto" class="q-mr-md" @click="abrirFormulario" />
   
   
         <q-select v-model="filtroSeleccionado" :options="opcionesFiltro" label="Filtrar por" outlined dense
@@ -72,6 +72,8 @@
               
                 <q-input outlined v-model="formulario.imagen" label="Imagen" class="q-my-md q-mx-md"
                 :rules="rules.imagen" hide-bottom-space />
+                <q-input outlined v-model="formulario.precio" label="Precio" class="q-my-md q-mx-md"
+              :rules="rules.precio" hide-bottom-space />
                   
             </q-card-section>
   
@@ -126,6 +128,7 @@
     nombre: '',
     codigo: '',
     imagen: '',
+    precio:'',
         });
   
   
@@ -144,7 +147,11 @@
     imagen: [
       (val) => !!val || 'Este campo es requerido',
       (val) => val.length >= 3 || 'Debe tener al menos 3 caracteres'
-    ]
+    ],
+    precio: [
+    (val) => !!val || 'Este campo es requerido',
+    (val) => val.length >= 3 || 'Debe tener al menos 3 caracteres'
+  ],
   };
   
   // columnas de la tabla
@@ -153,7 +160,7 @@
     { name: 'nombre', label: 'Nombre', field: 'nombre', align: 'center' },
     
     { name: 'imagen', label: 'Imagen', field: 'imagen', align: 'center' },
-    
+    { name: 'precio', label: 'Precio', field: 'precio', align: 'center'},
     { name: 'estado',label:'Estado',field:'estado',align:'center'},
     { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' }
   ]);
@@ -239,6 +246,7 @@
       nombre: '',
       codigo: '',
       imagen:'',
+      precio:'',
           };
     mostrarFormulario.value = true;
   };
@@ -251,6 +259,7 @@
       nombre: producto.nombre,
       codigo: producto.codigo,
       imagen:producto.imagen,
+      precio:producto.precio
      
     };
     mostrarFormulario.value = true;
