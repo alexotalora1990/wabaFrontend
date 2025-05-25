@@ -46,15 +46,8 @@
               {{ props.row.estado ? "Desactivar" : "Activar" }}
             </q-tooltip>
           </q-btn>
-
-          <!-- Botón Ver (Nuevo) -->
-    <q-btn flat color="primary" icon="visibility" @click="verUsuario(props.row)">
-      <q-tooltip>Ver</q-tooltip>
-    </q-btn>
         </q-td>
-        
       </template>
-      
     </q-table>
 
 
@@ -64,7 +57,7 @@
         <q-card-section class="bg-primary text-white">
           <div class="row items-center justify-between">
             <div class="text-h6">
-              {{ modoEdicion ? 'Editar Usuario' : 'Nuevo Usuario 1' }}
+              {{ modoEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
             </div>
             <q-btn flat dense icon="close" class="text-white" v-close-popup />
           </div>
@@ -74,8 +67,8 @@
           <q-card-section class="q-pt-md">
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
-            <q-input outlined v-model="formulario.wp" label="Whatsapp" class="q-my-md q-mx-md"
-              :rules="rules.wp" hide-bottom-space />
+            <q-input outlined v-model="formulario.telefono" label="Telefono" class="q-my-md q-mx-md"
+              :rules="rules.telefono" hide-bottom-space />
             <q-input outlined v-model="formulario.correo" label="Correo" type="email" class="q-my-md q-mx-md"
               :rules="rules.correo" hide-bottom-space />
             <q-input v-if="!modoEdicion" outlined v-model="formulario.contrasena" label="Contraseña" class="q-my-md q-mx-md"
@@ -105,7 +98,6 @@
 import { ref, onMounted, watch } from "vue";
 import { useUsuariosStore } from "../store/usuarios.js";
 import { useQuasar, Notify } from "quasar";
-import { useAuthStore } from '../store/auth.js';
 
 
 const storeUsuarios = useUsuariosStore();
@@ -117,10 +109,6 @@ const busqueda = ref('');
 const loading = ref(false);
 const error = ref("")
 
-// Variables reactivas para almacenar los datos de clientes, etiquetas y campañas
-const clientes = ref([]); 
-const etiquetas = ref([]);  
-const campanias = ref([]);  
 
 // Filtros
 const filtroSeleccionado = ref('Listar todos'); // Valor inicial
@@ -144,7 +132,7 @@ const modoEdicion = ref(false);
 const formulario = ref({
   _id: null,
   nombre: '',
-  wp: '',
+  telefono: '',
   correo: '',
   contrasena: '',
   rol: null
@@ -163,7 +151,7 @@ const rules = {
     (val) => !!val || 'El email es requerido',
     (val) => /.+@.+\..+/.test(val) || 'El email debe ser válido'
   ],
-  wp: [
+  telefono: [
     (val) => !!val || 'Este campo es requerido',
     (val) => /^[0-9]{8,20}$/.test(val) || 'Debe tener entre 8 y 20 dígitos'
   ],
@@ -173,52 +161,10 @@ const rules = {
   ],
 };
 
-// Ver 
-
-const verUsuario = async (usuario) => {
-  try {
-    loading.value = true;  // Activar el estado de carga
-    error.value = null;    // Limpiar posibles errores anteriores
-
-    // Verificar si el rol es admin
-    if (useAuthStore.rol === 'admin') {
-      // Si el rol es admin, solo cargar los datos del usuario seleccionado
-      const usuarioDetails = await obtenerUsuarioPorId(usuario._id);  // Esto debe traer {usuario, clientes, etiquetas, campanias}
-
-      // Asignar los datos obtenidos a las variables reactivas
-      clientes.value = usuarioDetails.clientes || [];  // Asignar clientes o un arreglo vacío si no se encuentran
-      etiquetas.value = usuarioDetails.etiquetas || [];  // Asignar etiquetas o un arreglo vacío si no se encuentran
-      campanias.value = usuarioDetails.campanias || [];  // Asignar campañas o un arreglo vacío si no se encuentran
-    
-    storeEtiquetas.cargarEtiquetasUsuario(etiquetas.value); 
-    } else {
-      // Si el rol es usuario, ya cargamos los datos automáticamente
-      const usuarioDetails = await storeUsuarios.obtenerUsuarioPorId(usuario._id);
-      clientes.value = usuarioDetails.clientes;
-      etiquetas.value = usuarioDetails.etiquetas;
-      campanias.value = usuarioDetails.campanias;
-    }
-
-  } catch (error) {
-    console.error("Error al obtener los datos del usuario:", error.message || error);
-    error.value = error.message || "Error al obtener los datos del usuario";
-    $q.notify({
-      type: 'negative',
-      message: error.value,
-      position: 'top-right'
-    });
-  } finally {
-    loading.value = false;  // Desactivar el estado de carga
-  }
-};
-
-
-
-
 // columnas de la tabla
 const columnas = ref([
   { name: 'nombre', label: 'Nombre', field: 'nombre', align: 'center' },
-  { name: 'wp', label: 'Whatsapp', field: 'wp', align: 'center' },
+  { name: 'telefono', label: 'Telefono', field: 'telefono', align: 'center' },
   { name: 'correo', label: 'Correo', field: 'correo', align: 'center' },
   { name: 'rol', label: 'Rol', field: 'rol', align: 'center' },
   { name: 'estado', label: 'Estado', field: 'estado', align: 'center' },
@@ -305,7 +251,7 @@ const abrirFormulario = () => {
   formulario.value = {
     nombre: '',
     correo: '',
-    wp: '',
+    telefono: '',
     contrasena: '',
     rol: '',
   };
@@ -319,7 +265,7 @@ const editarDatos = (usuario) => {
     _id: usuario._id,
     nombre: usuario.nombre,
     correo: usuario.correo,
-    wp: usuario.wp,
+    telefono: usuario.telefono,
     rol: usuario.rol,
     contrasena: usuario.contrasena
 

@@ -2,11 +2,12 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref } from 'vue';
 import { useAuthStore } from './auth.js';
-import EtiquetaCliente from '../pages/EtiquetaCliente.vue';
+
 
 export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
   const useLogin = useAuthStore();
-  const etiquetaliente = ref([]);
+  const EtiquetaCliente = ref([]);
+  const etiquetas =ref([]);
   const loading = ref(false);
   const error = ref(null);
 
@@ -198,6 +199,7 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
       loading.value = false;
     }
   };
+
   return {
     EtiquetaCliente ,
     loading,
@@ -209,5 +211,6 @@ export const useEtiquetaClienteStore = defineStore('etiquetaCliente', () => {
     desactivarEtiqueta,
     actualizarEtiqueta,
     crearEtiqueta,
+    
   };
 });

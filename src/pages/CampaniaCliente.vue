@@ -50,7 +50,7 @@
               {{ props.row.estado ? "Desactivar" : "Activar" }}
             </q-tooltip>
           </q-btn>
-          <q-btn flat color="teal" icon="list" @click="abrirPasos(props.row)">
+          <q-btn flat color="teal" icon="visibility" @click="abrirPasos(props.row)">
             <q-tooltip>Ver Pasos</q-tooltip>
           </q-btn>
           <q-btn flat color="red" icon="delete" @click="eliminarCampania(props.row)">
@@ -81,9 +81,7 @@
 
         <q-form @submit.prevent="guardarCampania">
           <q-card-section class="q-pt-md">
-            <!-- <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
-              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md" 
-              hide-bottom-space /> -->
+           
 
             <q-input v-model="formulario.nombre" label="Nombre de la campaña" outlined
               :rules="[val => !!val || 'Campo obligatorio']" class="q-mb-md" />
@@ -183,12 +181,12 @@
 import { ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useCampaniaClienteStore } from '../store/campaniaCliente.js';
-import { useUsuariosStore } from '../store/usuarios.js';
+
 
 
 const $q = useQuasar();
 const storeCampanias = useCampaniaClienteStore();
-const storeUsuarios=useUsuariosStore();
+
 
 
 // Estados
@@ -210,26 +208,7 @@ const opcionesFiltro = [
   { label: 'Inactivos', value: 'Inactivos' }
 ];
 
-//traer usuarios
-async function listarUsuarios() {
-  const response= await storeUsuarios.ListarActivos()
 
-  response.forEach(item =>{
-    datos={
-      label:item.nombre,
-      value:item._id
-    }
-    usuarios.push(datos)
-  })
-  console.log(usuarios);
- 
-} 
-function filterFn(val, update, abort) {
-    update(() => {
-        const needle = val.toLowerCase();
-        options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
-    })
-}
 
 // Diálogos
 const mostrarDialogoCampaña = ref(false);
@@ -325,7 +304,7 @@ watch(filtroSeleccionado, () => {
 // Cargar campañas al montar el componente
 onMounted(() => {
   cargarCampanias();
-  listarUsuarios()
+  
 });
 
 // Cambiar estado de la campaña

@@ -97,7 +97,7 @@
 
     <!-- Diálogo para Ver Detalles del Cliente -->
 <q-dialog v-model="mostrarDialogoDetalles" persistent>
-  <q-card style="min-width: 500px">
+  <q-card style="min-width: 700px">
     <q-card-section class="bg-primary text-white">
       <div class="row items-center justify-between">
         <div class="text-h6">
@@ -108,26 +108,76 @@
       </div>
     </q-card-section>
 
+    <!-- Contenedor Flexbox para mostrar datos en una columna y botones en la otra -->
     <q-card-section>
-      <div><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</div>
-      <div><strong>Documento:</strong> {{ clienteSeleccionado?.documento }}</div>
-      <div><strong>Correo:</strong> {{ clienteSeleccionado?.correo }}</div>
-      <div><strong>WhatsApp:</strong> {{ clienteSeleccionado?.wp }}</div>
-      <div><strong>Dirección:</strong> {{ clienteSeleccionado?.direccion }}</div>
-      <div><strong>Ciudad:</strong> {{ clienteSeleccionado?.ciudad }}</div>
-      <div><strong>País:</strong> {{ clienteSeleccionado?.pais }}</div>
-    </q-card-section>
+      <div class="row q-gutter-md">
+        <!-- Columna de Datos -->
+        <div class="col-8">
+          <div><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</div>
+          <div><strong>Documento:</strong> {{ clienteSeleccionado?.documento }}</div>
+          <div><strong>Correo:</strong> {{ clienteSeleccionado?.correo }}</div>
+          <div><strong>WhatsApp:</strong> {{ clienteSeleccionado?.wp }}</div>
+          <div><strong>Dirección:</strong> {{ clienteSeleccionado?.direccion }}</div>
+          <div><strong>Ciudad:</strong> {{ clienteSeleccionado?.ciudad }}</div>
+          <div><strong>País:</strong> {{ clienteSeleccionado?.pais }}</div>
+        </div>
 
-    <!-- Botones para Asignar Etiqueta, Asignar Campaña y Enviar Mensaje -->
-    <q-card-actions align="right">
-      <q-btn flat label="Asignar Etiqueta" color="primary" @click="mostrarSelectEtiqueta = true" class="q-mr-md" />
-      <q-btn flat label="Asignar Campaña" color="primary" @click="mostrarSelectCampania = true" class="q-mr-md" />
-      <q-btn flat label="Enviar mensaje" color="primary" @click="abrirModalMensaje(clienteSeleccionado)" />
-    </q-card-actions>
+        <!-- Columna de Botones -->
+  <div class="col-12" style="display: flex; justify-content: space-between;">
+  <!-- Botón Asignar Etiqueta -->
+  <q-btn 
+    flat 
+    icon="label" 
+    color="primary" 
+    @click="mostrarSelectEtiqueta = true" 
+    class="q-mb-md" 
+    :style="{ 'min-width': '50px' }">
+    <q-tooltip>Asignar Etiqueta</q-tooltip>
+  </q-btn>
+
+  <!-- Botón Asignar Campaña -->
+  <q-btn 
+    flat 
+    icon="campaign" 
+    color="primary" 
+    @click="mostrarSelectCampania = true" 
+    class="q-mb-md" 
+    :style="{ 'min-width': '50px' }">
+    <q-tooltip>Asignar Campaña</q-tooltip>
+  </q-btn>
+
+  <!-- Botón Enviar Mensaje -->
+  <q-btn 
+    flat 
+    icon="chat" 
+    color="primary" 
+    @click="abrirModalMensaje(clienteSeleccionado)" 
+    class="q-mb-md" 
+    :style="{ 'min-width': '50px' }">
+    <q-tooltip>Enviar Mensaje</q-tooltip>
+  </q-btn>
+
+  <!-- Botón Ver Historial -->
+  <q-btn 
+    flat 
+    icon="history" 
+    color="primary" 
+    @click="descargarHistorial" 
+    class="q-mb-md" 
+    :style="{ 'min-width': '50px' }">
+    <q-tooltip>Ver Historial</q-tooltip>
+  </q-btn>
+</div>
+
+
+      </div>
+    </q-card-section>
   </q-card>
 </q-dialog>
 
-<!-- Modal para Enviar mensaje (sin los botones de asignar etiqueta y campaña) -->
+
+
+<!-- Modal para Enviar mensaje  -->
 <q-dialog v-model="mostrarModalMensaje" persistent>
   <q-card style="min-width: 500px">
     <q-card-section class="bg-primary text-white">
@@ -220,6 +270,7 @@ const storeEtiquetas = useEtiquetaClienteStore();
 const mostrarSelectCampania = ref(false);
 const campaniaSeleccionada = ref(null);
 const campanias = ref([]);
+const enviarMensaje = ref('');
 
 // Obtener las campañas desde la API (similarly to how etiquetas were fetched)
 const cargarCampanias = async () => {
@@ -238,14 +289,19 @@ const cargarCampanias = async () => {
 const asignarCampania = () => {
   if (campaniaSeleccionada.value) {
     console.log('Campaña asignada:', campaniaSeleccionada.value);
-    // Aquí deberías enviar la campaña seleccionada al cliente
-    // Puedes agregar una función para hacer la asignación en tu API
+    
     mostrarSelectCampania.value = false; // Cerrar el modal después de la asignación
   }
 };
 
 // Etiquetas
-
+const asignarEtiqueta = () => {
+  if (etiquetaSeleccionada.value) {
+    console.log('Etiqueta asignada:', etiquetaSeleccionada.value);
+    
+    mostrarSelectEtiqueta.value = false; // Cerrar el modal después de la asignación
+  }
+};
 
 // Variables para manejar la selección
 const mostrarSelectEtiqueta = ref(false);
@@ -267,29 +323,7 @@ const cargarEtiquetas = async () => {
 
 
 
-// Asignar etiqueta al cliente seleccionado
-const asignarEtiqueta = async () => {
-  if (etiquetaSeleccionada.value) {
-    try {
-      // Llamada a la API para asignar la etiqueta al cliente
-      await storeClientes.asignarEtiqueta(clienteSeleccionado.value._id, etiquetaSeleccionada.value);
-      console.log('Etiqueta asignada correctamente');
-      $q.notify({
-        type: 'positive',
-        message: 'Etiqueta asignada correctamente',
-        position: 'top-right'
-      });
-      mostrarSelectEtiqueta.value = false; // Cerrar el modal después de la asignación
-    } catch (error) {
-      console.error('Error al asignar etiqueta:', error);
-      $q.notify({
-        type: 'negative',
-        message: 'Error al asignar etiqueta',
-        position: 'top-right'
-      });
-    }
-  }
-};
+
 
 // Estados
 
@@ -567,6 +601,9 @@ const mostrarError = (mensaje) => {
   });
 };
 
+const descargarHistorial=()=>{
+
+}
 
 </script>
 

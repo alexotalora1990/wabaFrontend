@@ -65,9 +65,7 @@
 
         <q-form @submit.prevent="guardarDatos">
           <q-card-section class="q-pt-md">
-            <!-- <q-select v-if="!modoEdicion" outlined v-model="formulario.idUsuario" label="Usuario" :options="options"
-              option-value="value" @filter="filterFn" emit-value map-options class="q-my-md q-mx-md"
-              hide-bottom-space /> -->
+            
             <q-input outlined v-model="formulario.nombre" label="Nombre" class="q-my-md q-mx-md" :rules="rules.nombre"
               hide-bottom-space />
             <q-input outlined v-model="formulario.descripcion" label="Descripcion" class="q-my-md q-mx-md"
@@ -157,27 +155,8 @@ const columnas = ref([
   { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' }
 ]);
 
-// listar usuarios
 
-async function listarUsuarios() {
-  const response = await storeUsuarios.ListarActivos()
 
-  response.forEach(item => {
-    datos = {
-      label: item.nombre,
-      value: item._id
-    }
-    usuarios.push(datos)
-  })
-  console.log(usuarios);
-
-}
-function filterFn(val, update, abort) {
-  update(() => {
-    const needle = val.toLowerCase();
-    options.value = usuarios.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
-  })
-}
 
 
 
@@ -188,7 +167,7 @@ const cargarDatos = async () => {
 
     console.log('Filtro seleccionado:', filtroSeleccionado.value); // Debug
 
-    let filtro = filtroSeleccionado.value?.value || 'Listar todos'; // Asegura que accedemos al `value`
+    let filtro = filtroSeleccionado.value?.value || 'Listar todos'; // Asegura que accedemos al value
     let response;
 
     if (filtro === 'Activos') {
@@ -222,14 +201,14 @@ const aplicarFiltro = () => {
   cargarDatos();
 };
 
-// Observa los cambios en `filtroSeleccionado` y aplica el filtro automáticamente
+// Observa los cambios en filtroSeleccionado y aplica el filtro automáticamente
 watch(filtroSeleccionado, () => {
   aplicarFiltro();
 });
 // Cargar campañas al montar el componente
 onMounted(() => {
   cargarDatos();
-  listarUsuarios()
+  
 });
 
 // Cambiar estado de la campaña
