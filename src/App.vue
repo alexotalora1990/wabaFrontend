@@ -10,7 +10,7 @@
           WabaCRM
         </q-toolbar-title>
         <q-space />
-        <q-btn flat dense label="Inicio" to="/" color="white" class="q-mr-md" />
+        <!-- <q-btn flat dense label="Inicio" to="/" color="white" class="q-mr-md" /> -->
         <q-btn v-if="!authStore.token" flat dense label="Iniciar Sesión" @click="goToLogin" color="white" />
         <q-btn v-else flat dense round icon="logout" @click="handleLogout" label="" color="white" />
       </q-toolbar>
@@ -43,12 +43,7 @@
           </q-item-section>
           <q-item-section>Clientes</q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/configuracion">
-          <q-item-section avatar>
-            <q-icon name="settings" />
-          </q-item-section>
-          <q-item-section>Configuración</q-item-section>
-        </q-item>
+        
         <q-item clickable v-ripple to="/etiqueta">
           <q-item-section avatar>
             <q-icon name="tag" />
@@ -61,10 +56,13 @@
           </q-item-section>
           <q-item-section>Campañas </q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/pago">
+        <q-item clickable v-ripple to="/pago"
+        v-if="authStore.hasrol('admin') || authStore.hasrol('ayudante')"
+        >
           <q-item-section avatar>
             <q-icon name="tag" />
           </q-item-section>
+          
           <q-item-section>Pago </q-item-section>
         </q-item>
         <q-item clickable v-ripple to="/producto">
@@ -72,6 +70,18 @@
             <q-icon name="inventory" />
           </q-item-section>
           <q-item-section>Productos</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/venta">
+          <q-item-section avatar>
+            <q-icon name="inventory" />
+          </q-item-section>
+          <q-item-section>Ventas</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/configuracion">
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+          <q-item-section>Configuración</q-item-section>
         </q-item>
       </q-list>
     </q-drawer>

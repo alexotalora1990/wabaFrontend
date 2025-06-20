@@ -96,154 +96,134 @@
     </q-dialog>
 
     <!-- Diálogo para Ver Detalles del Cliente -->
-<q-dialog v-model="mostrarDialogoDetalles" persistent>
-  <q-card style="min-width: 700px">
-    <q-card-section class="bg-primary text-white">
-      <div class="row items-center justify-between">
-        <div class="text-h6">
-          Detalles de Cliente
-        </div>
-        <!-- Botón de Cerrar (X) en la esquina superior derecha -->
-        <q-btn flat dense icon="close" class="text-white" v-close-popup />
-      </div>
-    </q-card-section>
+    <q-dialog v-model="mostrarDialogoDetalles" persistent>
+      <q-card style="min-width: 700px">
+        <q-card-section class="bg-primary text-white">
+          <div class="row items-center justify-between">
+            <div class="text-h6">
+              Detalles de Cliente
+            </div>
+            <!-- Botón de Cerrar (X) en la esquina superior derecha -->
+            <q-btn flat dense icon="close" class="text-white" v-close-popup />
+          </div>
+        </q-card-section>
 
-    <!-- Contenedor Flexbox para mostrar datos en una columna y botones en la otra -->
-    <q-card-section>
-      <div class="row q-gutter-md">
-        <!-- Columna de Datos -->
-        <div class="col-8">
-          <div><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</div>
-          <div><strong>Documento:</strong> {{ clienteSeleccionado?.documento }}</div>
-          <div><strong>Correo:</strong> {{ clienteSeleccionado?.correo }}</div>
-          <div><strong>WhatsApp:</strong> {{ clienteSeleccionado?.wp }}</div>
-          <div><strong>Dirección:</strong> {{ clienteSeleccionado?.direccion }}</div>
-          <div><strong>Ciudad:</strong> {{ clienteSeleccionado?.ciudad }}</div>
-          <div><strong>País:</strong> {{ clienteSeleccionado?.pais }}</div>
-        </div>
+        <!-- Contenedor Flexbox para mostrar datos en una columna y botones en la otra -->
+        <q-card-section>
+          <div class="row q-gutter-md">
+            <!-- Columna de Datos -->
+            <div class="col-8">
+              <div><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</div>
+              <div><strong>Documento:</strong> {{ clienteSeleccionado?.documento }}</div>
+              <div><strong>Correo:</strong> {{ clienteSeleccionado?.correo }}</div>
+              <div><strong>WhatsApp:</strong> {{ clienteSeleccionado?.wp }}</div>
+              <div><strong>Dirección:</strong> {{ clienteSeleccionado?.direccion }}</div>
+              <div><strong>Ciudad:</strong> {{ clienteSeleccionado?.ciudad }}</div>
+              <div><strong>País:</strong> {{ clienteSeleccionado?.pais }}</div>
+            </div>
 
-        <!-- Columna de Botones -->
-  <div class="col-12" style="display: flex; justify-content: space-between;">
-  <!-- Botón Asignar Etiqueta -->
-  <q-btn 
-    flat 
-    icon="label" 
-    color="primary" 
-    @click="mostrarSelectEtiqueta = true" 
-    class="q-mb-md" 
-    :style="{ 'min-width': '50px' }">
-    <q-tooltip>Asignar Etiqueta</q-tooltip>
-  </q-btn>
+            <!-- Columna de Botones -->
+            <div class="col-12" style="display: flex; justify-content: space-between;">
+              <!-- Botón Asignar Etiqueta -->
+              <q-btn flat icon="label" color="primary" @click="mostrarSelectEtiqueta = true" class="q-mb-md"
+                :style="{ 'min-width': '50px' }">
+                <q-tooltip>Asignar Etiqueta</q-tooltip>
+              </q-btn>
 
-  <!-- Botón Asignar Campaña -->
-  <q-btn 
-    flat 
-    icon="campaign" 
-    color="primary" 
-    @click="mostrarSelectCampania = true" 
-    class="q-mb-md" 
-    :style="{ 'min-width': '50px' }">
-    <q-tooltip>Asignar Campaña</q-tooltip>
-  </q-btn>
+              <!-- Botón Asignar Campaña -->
+              <q-btn flat icon="campaign" color="primary" @click="mostrarSelectCampania = true" class="q-mb-md"
+                :style="{ 'min-width': '50px' }">
+                <q-tooltip>Asignar Campaña</q-tooltip>
+              </q-btn>
 
-  <!-- Botón Enviar Mensaje -->
+               <!-- Botón Enviar Mensaje -->
   <q-btn 
     flat 
     icon="chat" 
     color="primary" 
-    @click="abrirModalMensaje(clienteSeleccionado)" 
-    class="q-mb-md" 
-    :style="{ 'min-width': '50px' }">
+    @click="abrirModalMensaje(cliente)" 
+    class="q-mb-md"
+    :style="{ 'min-width': '50px' }"
+  >
     <q-tooltip>Enviar Mensaje</q-tooltip>
   </q-btn>
 
-  <!-- Botón Ver Historial -->
-  <q-btn 
-    flat 
-    icon="history" 
-    color="primary" 
-    @click="descargarHistorial" 
-    class="q-mb-md" 
-    :style="{ 'min-width': '50px' }">
-    <q-tooltip>Ver Historial</q-tooltip>
-  </q-btn>
-</div>
+  <!-- Modal para Enviar mensaje -->
+  <q-dialog v-model="mostrarModalMensaje" persistent>
+    <q-card style="min-width: 500px">
+      <q-card-section class="bg-primary text-white">
+        <div class="text-h6">
+          Enviar mensaje a {{ clienteSeleccionado?.nombre }}
+        </div>
+      </q-card-section>
+
+      <q-card-section>
+        <q-input 
+          v-model="mensaje" 
+          label="Escribe tu mensaje" 
+          type="textarea" 
+          outlined 
+        />
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" color="red" v-close-popup />
+        <q-btn flat label="Enviar" color="primary" @click="enviarMensaje" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+              <!-- Botón Ver Historial -->
+              <q-btn flat icon="history" color="primary" @click="descargarHistorial" class="q-mb-md"
+                :style="{ 'min-width': '50px' }">
+                <q-tooltip>Ver Historial</q-tooltip>
+              </q-btn>
+            </div>
 
 
-      </div>
-    </q-card-section>
-  </q-card>
-</q-dialog>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
 
+    
 
-<!-- Modal para Enviar mensaje  -->
-<q-dialog v-model="mostrarModalMensaje" persistent>
-  <q-card style="min-width: 500px">
-    <q-card-section class="bg-primary text-white">
-      <div class="text-h6">
-        Enviar mensaje a {{ clienteSeleccionado?.nombre }}
-      </div>
-    </q-card-section>
+    <!-- Dialogo para Asignar Etiqueta -->
+    <q-dialog v-model="mostrarSelectEtiqueta" persistent>
+      <q-card style="min-width: 500px">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">Asignar Etiqueta</div>
+        </q-card-section>
 
-    <q-card-section>
-      <q-input v-model="mensaje" label="Escribe tu mensaje" type="textarea" outlined />
-    </q-card-section>
+        <q-card-section>
+          <q-select v-model="etiquetaSeleccionada" :options="etiquetas" label="Selecciona una etiqueta" outlined dense
+            @update:modelValue="asignarEtiqueta" />
+        </q-card-section>
 
-    <q-card-actions align="right">
-      <q-btn flat label="Cancelar" color="red" v-close-popup />
-      <q-btn flat label="Enviar" color="primary" @click="enviarMensaje" />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="red" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
-<!-- Dialogo para Asignar Etiqueta -->
-<q-dialog v-model="mostrarSelectEtiqueta" persistent>
-  <q-card style="min-width: 500px">
-    <q-card-section class="bg-primary text-white">
-      <div class="text-h6">Asignar Etiqueta</div>
-    </q-card-section>
+    <!-- Dialogo para Asignar Campaña -->
+    <q-dialog v-model="mostrarSelectCampania" persistent>
+      <q-card style="min-width: 500px">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">Asignar Campaña</div>
+        </q-card-section>
 
-    <q-card-section>
-      <q-select
-        v-model="etiquetaSeleccionada"
-        :options="etiquetas"
-        label="Selecciona una etiqueta"
-        outlined
-        dense
-        @update:modelValue="asignarEtiqueta"
-      />
-    </q-card-section>
+        <q-card-section>
+          <q-select v-model="campaniaSeleccionada" :options="campanias" label="Selecciona una campaña" outlined dense
+            @update:modelValue="asignarCampania" />
+        </q-card-section>
 
-    <q-card-actions align="right">
-      <q-btn flat label="Cancelar" color="red" v-close-popup />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
-
-<!-- Dialogo para Asignar Campaña -->
-<q-dialog v-model="mostrarSelectCampania" persistent>
-  <q-card style="min-width: 500px">
-    <q-card-section class="bg-primary text-white">
-      <div class="text-h6">Asignar Campaña</div>
-    </q-card-section>
-
-    <q-card-section>
-      <q-select
-        v-model="campaniaSeleccionada"
-        :options="campanias"
-        label="Selecciona una campaña"
-        outlined
-        dense
-        @update:modelValue="asignarCampania"
-      />
-    </q-card-section>
-
-    <q-card-actions align="right">
-      <q-btn flat label="Cancelar" color="red" v-close-popup />
-    </q-card-actions>
-  </q-card>
-</q-dialog>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="red" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
   </div>
 </template>
@@ -256,6 +236,7 @@ import { useUsuariosStore } from '../store/usuarios.js';
 import { useAuthStore } from '../store/auth.js'; // Asegúrate de que el path es correcto
 import { useCampaniaClienteStore } from '../store/campaniaCliente.js';
 import { useEtiquetaClienteStore } from "../store/etiquetaCliente.js";
+import { BOT_BASE_URL } from "../axiosBot.js";
 
 const authStore = useAuthStore();
 
@@ -271,6 +252,7 @@ const mostrarSelectCampania = ref(false);
 const campaniaSeleccionada = ref(null);
 const campanias = ref([]);
 const enviarMensaje = ref('');
+const clienteSeleccionado = ref(null);
 
 // Obtener las campañas desde la API (similarly to how etiquetas were fetched)
 const cargarCampanias = async () => {
@@ -289,7 +271,7 @@ const cargarCampanias = async () => {
 const asignarCampania = () => {
   if (campaniaSeleccionada.value) {
     console.log('Campaña asignada:', campaniaSeleccionada.value);
-    
+
     mostrarSelectCampania.value = false; // Cerrar el modal después de la asignación
   }
 };
@@ -298,7 +280,7 @@ const asignarCampania = () => {
 const asignarEtiqueta = () => {
   if (etiquetaSeleccionada.value) {
     console.log('Etiqueta asignada:', etiquetaSeleccionada.value);
-    
+
     mostrarSelectEtiqueta.value = false; // Cerrar el modal después de la asignación
   }
 };
@@ -350,7 +332,7 @@ const mostrarFormulario = ref(false);
 const mostrarDialogoDetalles = ref(false);
 const mostrarModalMensaje = ref(false);
 const mensaje = ref('');
-const clienteSeleccionado = ref(null);
+
 
 // Formularios
 const modoEdicion = ref(false);
@@ -484,7 +466,7 @@ onMounted(() => {
   cargarDatos();
   listarUsuarios()
   cargarCampanias();
-    cargarEtiquetas();
+  cargarEtiquetas();
 });
 
 // Método para abrir el formulario de detalles del cliente
@@ -548,12 +530,8 @@ const editarDatos = (cliente) => {
   mostrarFormulario.value = true;
 };
 
-// Método para abrir el modal de mensaje
-const abrirModalMensaje = (cliente) => {
-  clienteSeleccionado.value = cliente;
-  mensaje.value = `Hola ${cliente.nombre}, ¿cómo estás?`;  // Mensaje por defecto
-  mostrarModalMensaje.value = true;
-};
+
+
 
 
 const guardarDatos = async () => {
@@ -601,10 +579,37 @@ const mostrarError = (mensaje) => {
   });
 };
 
-const descargarHistorial=()=>{
+const descargarHistorial = () => {
 
 }
 
+
+// Método para abrir el modal de mensaje
+function abrirModalMensaje(cliente) {
+  clienteSeleccionado.value = cliente;
+  mensaje.value = '';
+  mostrarModalMensaje.value = true;
+}
+
+async function enviarMensajeAlCliente() {
+  if (!clienteSeleccionado.value?.wp) {
+    Notify.create({ type: 'negative', message: 'Número de WhatsApp no disponible' });
+    return;
+  }
+
+  try {
+    await axiosBot.post('/v1/messages', {
+      number: clienteSeleccionado.value.wp,
+      message: mensaje.value
+    });
+    Notify.create({ type: 'positive', message: 'Mensaje enviado correctamente' });
+    mostrarModalMensaje.value = false;
+  }
+  catch (err) {
+    console.error(err);
+    Notify.create({ type: 'negative', message: 'Error al enviar mensaje' });
+  }
+}
 </script>
 
 <style scoped>

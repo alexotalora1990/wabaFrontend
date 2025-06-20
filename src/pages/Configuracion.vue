@@ -4,11 +4,11 @@ import { useUsuariosStore } from "../store/usuarios.js";
 import { usePagoStore } from "../store/pagos.js";
 import { useAuthStore } from '../store/auth.js';
 import { Notify } from 'quasar';
+import { BOT_BASE_URL } from "../axiosBot.js";
 
 const modalQR = ref(false);
-const qrUrl = ref("http://localhost:4700/");
-
-
+const qrEndpoint = '/v1/register';
+const qrUrl = computed(() => BOT_BASE_URL);
 
 const usuariosStore = useUsuariosStore();
 const pagoStore = usePagoStore();
@@ -151,7 +151,7 @@ const cambiarPlan = async () => {
 
 
   <!-- modal codigo  qr -->
-  <div>
+  <!-- <div>
     <q-dialog v-model="modalQR" persistent>
       <q-card style="width: 500px; max-width: 90vw;">
         <q-card-section class="row items-center q-pb-none">
@@ -176,8 +176,36 @@ const cambiarPlan = async () => {
           />
         </q-card-actions>
       </q-card>
-    </q-dialog>
-  </div>
+    </q-dialog> -->
+  <!-- </div> -->
+
+   <!-- modal código qr -->
+  <q-dialog v-model="modalQR" persistent>
+    <q-card style="width: 500px; max-width: 90vw;">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Escanear QR para conectar WhatsApp</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="flex flex-center q-pt-none">
+        <!-- Usa la URL completa al endpoint que devuelve el HTML con el QR -->
+        <iframe 
+          :src="qrUrl" 
+          style="width: 100%; height: 400px; border: none;"
+          title="WhatsApp QR Connection"
+        ></iframe>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn 
+          label="Cerrar" 
+          color="primary" 
+          v-close-popup 
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <style scoped>

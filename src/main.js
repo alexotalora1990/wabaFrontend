@@ -33,5 +33,7 @@ app.use(router);
 app.mount('#app');
 
 // Configura la ruta principal para Axios
-// axios.defaults.baseURL = "http://localhost:4000/api/";
-axios.defaults.baseURL = "https://wabacrm.onrender.com/api/";
+axios.defaults.baseURL = "http://localhost:4000/api/";
+// axios.defaults.baseURL = "https://wabacrm.onrender.com/api/";
+
+

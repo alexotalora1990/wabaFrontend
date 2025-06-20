@@ -60,7 +60,7 @@
               {{ props.row.estado ? "Desactivar" : "Activar" }}
             </q-tooltip>
           </q-btn>
-          <q-btn flat color="teal" icon="list" @click="abrirPasos(props.row)">
+          <q-btn flat color="teal" icon="visibility" @click="abrirPasos(props.row)">
             <q-tooltip>Ver Pasos</q-tooltip>
           </q-btn>
           <q-btn 

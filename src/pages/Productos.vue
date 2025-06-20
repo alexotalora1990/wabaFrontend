@@ -74,6 +74,7 @@
                 :rules="rules.imagen" hide-bottom-space />
                 <q-input outlined v-model="formulario.precio" label="Precio" class="q-my-md q-mx-md"
               :rules="rules.precio" hide-bottom-space />
+              <q-input outlined v-model="formulario.cantidad" label="Cantidad" class="q-my-md q-mx-md"/>
                   
             </q-card-section>
   
@@ -129,6 +130,7 @@
     codigo: '',
     imagen: '',
     precio:'',
+    cantidad:'',
         });
   
   
@@ -161,6 +163,7 @@
     
     { name: 'imagen', label: 'Imagen', field: 'imagen', align: 'center' },
     { name: 'precio', label: 'Precio', field: 'precio', align: 'center'},
+    {name:'cantidad', label:'Cantidad',field:'cantidad',align:'center'},
     { name: 'estado',label:'Estado',field:'estado',align:'center'},
     { name: 'acciones', label: 'Acciones', field: 'acciones', align: 'center' }
   ]);
@@ -247,6 +250,7 @@
       codigo: '',
       imagen:'',
       precio:'',
+      cantidad:'',
           };
     mostrarFormulario.value = true;
   };
@@ -259,7 +263,8 @@
       nombre: producto.nombre,
       codigo: producto.codigo,
       imagen:producto.imagen,
-      precio:producto.precio
+      precio:producto.precio,
+      cantidad:producto.cantidad
      
     };
     mostrarFormulario.value = true;
